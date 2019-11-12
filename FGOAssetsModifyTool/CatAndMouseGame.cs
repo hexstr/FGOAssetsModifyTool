@@ -10,38 +10,91 @@ public class CatAndMouseGame
 {
     private static byte[] BattleIV = new byte[32];
     private static byte[] BattleKey = new byte[32];
+    public static bool isCN = false;
     static CatAndMouseGame()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes("kzdMtpmzqCHAfx00saU1gIhTjYCuOD1JstqtisXsGYqRVcqrHRydj3k6vJCySu3g");
-        byte[] bytes2 = Encoding.UTF8.GetBytes("PFBs0eIuunoxKkCcLbqDVerU1rShhS276SAL3A8tFLUfGvtz3F3FFeKELIk3Nvi4");
-        for (int i = 0; i < bytes2.Length / 4; i++)
+        byte[] bytes;
+        byte[] bytes2;
+        if (isCN)
         {
-            if (i % 2 == 0)
+            bytes = Encoding.UTF8.GetBytes("d3b13d9093cc6b457fd89766bafa1626ee2ef76626d49ce0d424f4156231ce56");
+            bytes2 = Encoding.UTF8.GetBytes("5ec7ce0fddc50bca9f82b8338b9135c69e0e9e169648df69054dcb96553598e6");
+            for (int i = 0; i < bytes2.Length; i++)
             {
-                CatAndMouseGame.baseData[i / 2 * 4] = bytes2[i * 4];
-                CatAndMouseGame.baseData[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
-                CatAndMouseGame.baseData[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
-                CatAndMouseGame.baseData[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
+                if (i % 2 == 0)
+                {
+                    CatAndMouseGame.baseData[i / 2] = bytes2[i];
+                }
+                else
+                {
+                    CatAndMouseGame.baseTop[i / 2] = bytes2[i];
+                }
             }
-            else
+            for (int j = 0; j < bytes.Length / 4; j++)
             {
-                CatAndMouseGame.baseTop[i / 2 * 4] = bytes2[i * 4];
-                CatAndMouseGame.baseTop[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
-                CatAndMouseGame.baseTop[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
-                CatAndMouseGame.baseTop[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
+                if (j % 2 == 0)
+                {
+                    CatAndMouseGame.stageData[j / 2 * 4] = bytes[j * 4];
+                    CatAndMouseGame.stageData[j / 2 * 4 + 1] = bytes[j * 4 + 1];
+                    CatAndMouseGame.stageData[j / 2 * 4 + 2] = bytes[j * 4 + 2];
+                    CatAndMouseGame.stageData[j / 2 * 4 + 3] = bytes[j * 4 + 3];
+                }
+                else
+                {
+                    CatAndMouseGame.stageTop[j / 2 * 4] = bytes[j * 4];
+                    CatAndMouseGame.stageTop[j / 2 * 4 + 1] = bytes[j * 4 + 1];
+                    CatAndMouseGame.stageTop[j / 2 * 4 + 2] = bytes[j * 4 + 2];
+                    CatAndMouseGame.stageTop[j / 2 * 4 + 3] = bytes[j * 4 + 3];
+                }
             }
         }
-        for (int i = 0; i < bytes.Length; i++)
+        else
         {
-            if (i % 2 == 0)
+            bytes = Encoding.UTF8.GetBytes("kzdMtpmzqCHAfx00saU1gIhTjYCuOD1JstqtisXsGYqRVcqrHRydj3k6vJCySu3g");
+            bytes2 = Encoding.UTF8.GetBytes("PFBs0eIuunoxKkCcLbqDVerU1rShhS276SAL3A8tFLUfGvtz3F3FFeKELIk3Nvi4");
+            for (int i = 0; i < bytes2.Length / 4; i++)
             {
-                CatAndMouseGame.stageData[i / 2] = bytes[i];
+                if (i % 2 == 0)
+                {
+                    CatAndMouseGame.baseData[i / 2 * 4] = bytes2[i * 4];
+                    CatAndMouseGame.baseData[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
+                    CatAndMouseGame.baseData[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
+                    CatAndMouseGame.baseData[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
+                }
+                else
+                {
+                    CatAndMouseGame.baseTop[i / 2 * 4] = bytes2[i * 4];
+                    CatAndMouseGame.baseTop[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
+                    CatAndMouseGame.baseTop[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
+                    CatAndMouseGame.baseTop[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
+                }
             }
-            else
+            for (int i = 0; i < bytes.Length; i++)
             {
-                CatAndMouseGame.stageTop[i / 2] = bytes[i];
+                if (i % 2 == 0)
+                {
+                    CatAndMouseGame.stageData[i / 2] = bytes[i];
+                }
+                else
+                {
+                    CatAndMouseGame.stageTop[i / 2] = bytes[i];
+                }
             }
         }
+    }
+    public static string MouseGame3(string str)
+    {
+        byte[] data = Convert.FromBase64String(str);
+        byte[] array = CatAndMouseGame.MouseHomeMain(data, CatAndMouseGame.stageData, CatAndMouseGame.stageTop, true);
+        if (array == null)
+        {
+            return null;
+        }
+        for (int i = 0; i < array.Length; i++)
+        {
+            array[i] = (byte)~array[i];
+        }
+        return Encoding.UTF8.GetString(array).TrimEnd(new char[1]);
     }
     public static byte[] CatGame4(byte[] data)
     {
@@ -97,15 +150,6 @@ public class CatAndMouseGame
             array[i] = (byte)~array[i];
         }
         return Encoding.UTF8.GetString(array).TrimEnd(new char[1]);
-    }
-    public static string CatGame8(string str)
-    {
-        byte[] bytes = Encoding.UTF8.GetBytes(str);
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            bytes[i] = (byte)~bytes[i];
-        }
-        return CatAndMouseGame.CatHomeZ2(bytes, CatAndMouseGame.stageData, CatAndMouseGame.stageTop, true);
     }
     public static byte[] CatHomeMain(byte[] data, byte[] home, byte[] info, bool isCompress = false)
     {
@@ -192,61 +236,6 @@ public class CatAndMouseGame
                 memoryStream2.Close();
             }
             result = array;
-        }
-        catch (Exception)
-        {
-            result = null;
-        }
-        finally
-        {
-            if (memoryStream != null)
-            {
-                memoryStream.Close();
-            }
-            if (cryptoStream != null)
-            {
-                cryptoStream.Close();
-            }
-        }
-        return result;
-    }
-    public static string CatHomeZ2(byte[] data, byte[] home, byte[] info, bool isCompress = false)
-    {
-        byte[] array = CatHomeMainZ2(data, home, info, isCompress);
-        if (array != null)
-        {
-            return Convert.ToBase64String(array);
-        }
-        return null;
-    }
-    public static byte[] CatHomeMainZ2(byte[] data, byte[] home, byte[] info, bool isCompress = false)
-    {
-        MemoryStream memoryStream = null;
-        CryptoStream cryptoStream = null;
-        byte[] result;
-        try
-        {
-            ICryptoTransform cryptoTransform = new RijndaelManaged
-            {
-                Padding = PaddingMode.PKCS7,
-                Mode = CipherMode.CBC,
-                KeySize = 256,
-                BlockSize = 256
-            }.CreateEncryptor(home, info);
-            memoryStream = new MemoryStream();
-            cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
-            if (isCompress)
-            {
-                GZipOutputStream gzipOutputStream = new GZipOutputStream(cryptoStream);
-                gzipOutputStream.Write(data, 0, data.Length);
-                gzipOutputStream.Close();
-            }
-            else
-            {
-                cryptoStream.Write(data, 0, data.Length);
-                cryptoStream.FlushFinalBlock();
-            }
-            result = memoryStream.ToArray();
         }
         catch (Exception)
         {
