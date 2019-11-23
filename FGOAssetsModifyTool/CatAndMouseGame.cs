@@ -10,77 +10,46 @@ public class CatAndMouseGame
 {
     private static byte[] BattleIV = new byte[32];
     private static byte[] BattleKey = new byte[32];
-    public static bool isCN = false;
+    static void ParseKey(byte[] bytes, byte[] bytes2)
+    {
+        for (int i = 0; i < bytes2.Length; i++)
+        {
+            if (i % 2 == 0)
+            {
+                CatAndMouseGame.baseData[i / 2] = bytes2[i];
+            }
+            else
+            {
+                CatAndMouseGame.baseTop[i / 2] = bytes2[i];
+            }
+        }
+        for (int j = 0; j < bytes.Length / 4; j++)
+        {
+            if (j % 2 == 0)
+            {
+                CatAndMouseGame.stageData[j / 2 * 4] = bytes[j * 4];
+                CatAndMouseGame.stageData[j / 2 * 4 + 1] = bytes[j * 4 + 1];
+                CatAndMouseGame.stageData[j / 2 * 4 + 2] = bytes[j * 4 + 2];
+                CatAndMouseGame.stageData[j / 2 * 4 + 3] = bytes[j * 4 + 3];
+            }
+            else
+            {
+                CatAndMouseGame.stageTop[j / 2 * 4] = bytes[j * 4];
+                CatAndMouseGame.stageTop[j / 2 * 4 + 1] = bytes[j * 4 + 1];
+                CatAndMouseGame.stageTop[j / 2 * 4 + 2] = bytes[j * 4 + 2];
+                CatAndMouseGame.stageTop[j / 2 * 4 + 3] = bytes[j * 4 + 3];
+            }
+        }
+    }
+    public static void switchVersion()
+    {
+        ParseKey(Encoding.UTF8.GetBytes("d3b13d9093cc6b457fd89766bafa1626ee2ef76626d49ce0d424f4156231ce56"),
+            Encoding.UTF8.GetBytes("5ec7ce0fddc50bca9f82b8338b9135c69e0e9e169648df69054dcb96553598e6"));
+    }
     static CatAndMouseGame()
     {
-        byte[] bytes;
-        byte[] bytes2;
-        if (isCN)
-        {
-            bytes = Encoding.UTF8.GetBytes("d3b13d9093cc6b457fd89766bafa1626ee2ef76626d49ce0d424f4156231ce56");
-            bytes2 = Encoding.UTF8.GetBytes("5ec7ce0fddc50bca9f82b8338b9135c69e0e9e169648df69054dcb96553598e6");
-            for (int i = 0; i < bytes2.Length; i++)
-            {
-                if (i % 2 == 0)
-                {
-                    CatAndMouseGame.baseData[i / 2] = bytes2[i];
-                }
-                else
-                {
-                    CatAndMouseGame.baseTop[i / 2] = bytes2[i];
-                }
-            }
-            for (int j = 0; j < bytes.Length / 4; j++)
-            {
-                if (j % 2 == 0)
-                {
-                    CatAndMouseGame.stageData[j / 2 * 4] = bytes[j * 4];
-                    CatAndMouseGame.stageData[j / 2 * 4 + 1] = bytes[j * 4 + 1];
-                    CatAndMouseGame.stageData[j / 2 * 4 + 2] = bytes[j * 4 + 2];
-                    CatAndMouseGame.stageData[j / 2 * 4 + 3] = bytes[j * 4 + 3];
-                }
-                else
-                {
-                    CatAndMouseGame.stageTop[j / 2 * 4] = bytes[j * 4];
-                    CatAndMouseGame.stageTop[j / 2 * 4 + 1] = bytes[j * 4 + 1];
-                    CatAndMouseGame.stageTop[j / 2 * 4 + 2] = bytes[j * 4 + 2];
-                    CatAndMouseGame.stageTop[j / 2 * 4 + 3] = bytes[j * 4 + 3];
-                }
-            }
-        }
-        else
-        {
-            bytes = Encoding.UTF8.GetBytes("kzdMtpmzqCHAfx00saU1gIhTjYCuOD1JstqtisXsGYqRVcqrHRydj3k6vJCySu3g");
-            bytes2 = Encoding.UTF8.GetBytes("PFBs0eIuunoxKkCcLbqDVerU1rShhS276SAL3A8tFLUfGvtz3F3FFeKELIk3Nvi4");
-            for (int i = 0; i < bytes2.Length / 4; i++)
-            {
-                if (i % 2 == 0)
-                {
-                    CatAndMouseGame.baseData[i / 2 * 4] = bytes2[i * 4];
-                    CatAndMouseGame.baseData[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
-                    CatAndMouseGame.baseData[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
-                    CatAndMouseGame.baseData[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
-                }
-                else
-                {
-                    CatAndMouseGame.baseTop[i / 2 * 4] = bytes2[i * 4];
-                    CatAndMouseGame.baseTop[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
-                    CatAndMouseGame.baseTop[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
-                    CatAndMouseGame.baseTop[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
-                }
-            }
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                if (i % 2 == 0)
-                {
-                    CatAndMouseGame.stageData[i / 2] = bytes[i];
-                }
-                else
-                {
-                    CatAndMouseGame.stageTop[i / 2] = bytes[i];
-                }
-            }
-        }
+        ParseKey(Encoding.UTF8.GetBytes("PFBs0eIuunoxKkCcLbqDVerU1rShhS276SAL3A8tFLUfGvtz3F3FFeKELIk3Nvi4"),
+            Encoding.UTF8.GetBytes("kzdMtpmzqCHAfx00saU1gIhTjYCuOD1JstqtisXsGYqRVcqrHRydj3k6vJCySu3g"));
     }
     public static string MouseGame3(string str)
     {
@@ -122,14 +91,14 @@ public class CatAndMouseGame
 
         for (int i = 0; i < array.Length; i += 2)
         {
-           if (i + 1 >= array.Length)
-           {
-               break;
-           }
-           byte b = array[i];
-           byte b2 = array[i + 1];
-           array[i] = (byte)(b2 ^ 210);
-           array[i + 1] = (byte)(b ^ 206);
+            if (i + 1 >= array.Length)
+            {
+                break;
+            }
+            byte b = array[i];
+            byte b2 = array[i + 1];
+            array[i] = (byte)(b2 ^ 210);
+            array[i + 1] = (byte)(b ^ 206);
         }
         return array;
     }

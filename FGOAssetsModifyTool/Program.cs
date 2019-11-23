@@ -32,7 +32,7 @@ namespace FGOAssetsModifyTool
                 {
                     case 0:
                         {
-                            CatAndMouseGame.isCN = true;
+                            CatAndMouseGame.switchVersion();
                             displayMenu();
                             break;
                         }
