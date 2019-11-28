@@ -20,6 +20,7 @@ namespace FGOAssetsModifyTool
                     "6: Export AssetStorage to json\n" +
                     "7: Calculate files crc\t" +
                     "8: Decrypt scripts\n" +
+                    "9: Change to EN mode\n" +
                     "0: Change to CN mode");
                 int arg = Convert.ToInt32(Console.ReadLine());
                 string path = System.IO.Directory.GetCurrentDirectory();
@@ -30,9 +31,15 @@ namespace FGOAssetsModifyTool
                 byte[] output;
                 switch (arg)
                 {
+                    case 9:
+                        {
+                            CatAndMouseGame.EN();
+                            displayMenu();
+                            break;
+                        }
                     case 0:
                         {
-                            CatAndMouseGame.switchVersion();
+                            CatAndMouseGame.CN();
                             displayMenu();
                             break;
                         }
