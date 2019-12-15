@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.IO;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 namespace FGOAssetsModifyTool
@@ -12,32 +13,34 @@ namespace FGOAssetsModifyTool
             try
             {
                 Console.WriteLine(
-                    "1: Encrypt\t" +
-                    "2: Decrypt\t" +
-                    "3: Display_name\n" +
-                    "4: Convert CN text to JP\t" +
-                    "5: Decrypt AssetStorage.txt\t" +
-                    "6: Export AssetStorage to json\n" +
-                    "7: Calculate files crc\t" +
-                    "8: Decrypt scripts\n" +
-                    "9: Change to EN mode\n" +
-                    "0: Change to CN mode");
+                    "1: 加密\t" +
+                    "2: 解密\n" +
+                    "3: 加密AssetStorage.txt\t" +
+                    "4: 解密AssetStorage.txt\t" +
+                    "5: 把AssetStorage转换为Json格式\n" +
+                    "6: 加密剧情文本(scripts)\n" +
+                    "7: 解密剧情文本(scripts)\n" +
+                    "8: 把国服文本转换为日服适用\n" +
+                    "9: 计算CRC值\n" +
+                    "0: 导出资源名 - 实际文件名" +
+                    "69: 切换为美服密钥\n" +
+                    "67: 切换为国服密钥");
+                //Console.WriteLine(CatAndMouseGame.getShaName("CharaFigure@3032000.unity3d"));
                 int arg = Convert.ToInt32(Console.ReadLine());
                 string path = System.IO.Directory.GetCurrentDirectory();
-                //DirectoryInfo folder = new DirectoryInfo(path + @"\com.aniplex.fategrandorder\files\data\d713\");
                 DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
                 DirectoryInfo needEncrypt = new DirectoryInfo(path + @"\Decrypt\");
                 byte[] raw;
                 byte[] output;
                 switch (arg)
                 {
-                    case 9:
+                    case 69:
                         {
                             CatAndMouseGame.EN();
                             displayMenu();
                             break;
                         }
-                    case 0:
+                    case 67:
                         {
                             CatAndMouseGame.CN();
                             displayMenu();
@@ -71,53 +74,37 @@ namespace FGOAssetsModifyTool
                         }
                     case 3:
                         {
-                            byte[] data = new byte[64];
-                            folder = new DirectoryInfo(path + @"\Decrypt\");
-                            StringBuilder stringBuilder = new StringBuilder("{");
-                            foreach (FileInfo file in folder.GetFiles("*.bin"))
-                            {
-                                Console.WriteLine("Reading file from 'Decrypt': " + file.FullName);
-                                using (var stream = File.OpenRead(file.FullName))
-                                {
-                                    stream.Seek(0x4B, SeekOrigin.Begin);
-                                    stream.Read(data, 0, data.Length);
-                                    for (int i = 0; i < 64; ++i)
-                                    {
-                                        if (data[i] == 0x00)
-                                        {
-                                            stringBuilder.Append("{\"hash\":\"" + file.Name + "\",");
-                                            stringBuilder.Append("\"name\":\"" + Encoding.UTF8.GetString(data, 0, i) + "\"},");
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            string result = stringBuilder.ToString().TrimEnd(',');
-                            result += "}";
-                            File.WriteAllText(path + @"\Android\Name.json", result);
+                            string data = File.ReadAllText(path + @"\Android\AssetStorage_dec.txt");
+                            //string tmp = data;
+                            //tmp = tmp.Trim(new char[]
+                            //{
+                            //    '﻿'
+                            //});
+                            //int ri = data.IndexOfAny(new char[]
+                            //{
+                            //    '\r',
+                            //    '\n'
+                            //});
+                            //if (ri > 1)
+                            //{
+                            //    string crcString = tmp.Substring(0, ri);
+                            //    if (crcString.StartsWith("~"))
+                            //    {
+                            //        crcString = crcString.Substring(1);
+                            //        Console.WriteLine("OldAssetStorageCrc: " + crcString);
+                            //        tmp = tmp.Substring(ri + 1);
+                            //        byte[] readData = Encoding.UTF8.GetBytes(tmp);
+                            //        uint crc = Crc32.Compute(readData);
+                            //        Console.WriteLine("AssetStorageCrc: " + crc);
+                            //        data = data.Replace(crcString.ToString(), crc.ToString());
+                            //    }
+                            //}
+                            string loadData = CatAndMouseGame.CatGame8(data);
+                            File.WriteAllText(path + @"\Android\AssetStorage_enc.txt", loadData);
+                            Console.WriteLine("Writing file to: " + path + @"\Android\AssetStorage_enc.txt");
                             break;
                         }
                     case 4:
-                        {
-                            JObject jp = JObject.Parse(File.ReadAllText(needEncrypt + "JP.txt"));
-                            JObject cn = JObject.Parse(File.ReadAllText(needEncrypt + "CN.txt"));
-                            JObject no = new JObject();
-                            foreach (JProperty jProperty in jp.Properties())
-                            {
-                                if (cn[jProperty.Name] != null)
-                                {
-                                    jp[jProperty.Name] = cn[jProperty.Name];
-                                }
-                                else
-                                {
-                                    no.Add(jProperty.Name, jProperty.Value);
-                                }
-                            }
-                            File.WriteAllText(needEncrypt + "LocalizationJpn.txt", jp.ToString());
-                            File.WriteAllText(needEncrypt + "none.txt", no.ToString());
-                            break;
-                        }
-                    case 5:
                         {
                             string data = File.ReadAllText(path + @"\Android\AssetStorage.txt");
                             string loadData = CatAndMouseGame.MouseGame8(data);
@@ -125,7 +112,7 @@ namespace FGOAssetsModifyTool
                             Console.WriteLine("Writing file to: " + path + @"\Android\AssetStorage_dec.txt");
                             break;
                         }
-                    case 6:
+                    case 5:
                         {
                             Console.WriteLine("Reading file from: " + path + @"\Android\AssetStorage_dec.txt");
                             string loadData = File.ReadAllText(path + @"\Android\AssetStorage_dec.txt");
@@ -136,7 +123,7 @@ namespace FGOAssetsModifyTool
                             byte[] bytes = Encoding.UTF8.GetBytes(loadData);
                             listData = loadData.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                             string[] array = listData[0].Split(',');
-                            Console.WriteLine("Parsing  json...");
+                            Console.WriteLine("Parsing json...");
                             StringBuilder stringBuilder = new StringBuilder("{");
                             int num4;
                             string attrib;
@@ -161,13 +148,65 @@ namespace FGOAssetsModifyTool
                                 name = array[4];
                                 stringBuilder.Append("\"name\":\"" + name + "\"},");
                             }
-                            string json = stringBuilder.ToString().TrimEnd(',');
-                            json += "}";
-                            File.WriteAllText(path + @"\Android\AssetStorage.json", json);
+                            stringBuilder.Remove(stringBuilder.Length - 1, 1);
+                            stringBuilder.Append("}");
+                            File.WriteAllText(path + @"\Android\AssetStorage.json", stringBuilder.ToString());
                             Console.WriteLine("Writing file to: " + path + @"\Android\AssetStorage.json");
                             break;
                         }
+                    case 6:
+                        {
+                            folder = new DirectoryInfo(path + @"\DecryptScripts\");
+                            foreach (FileInfo file in folder.GetFiles("*.txt", SearchOption.AllDirectories))
+                            {
+
+                                Console.WriteLine("Encrypting: " + file.FullName);
+                                string dePath = Path.GetFileNameWithoutExtension(file.Directory.Name);
+                                string txt = File.ReadAllText(file.FullName);
+                                string outputTxt = CatAndMouseGame.CatGame3(txt);
+                                if (!Directory.Exists(path + @"\EncryptScripts\" + dePath))
+                                    Directory.CreateDirectory(path + @"\EncryptScripts\" + dePath);
+                                File.WriteAllText(path + @"\EncryptScripts\" + dePath + "\\" + file.Name, outputTxt);
+                            }
+                            break;
+                        }
                     case 7:
+                        {
+                            folder = new DirectoryInfo(path + @"\EncryptScripts\");
+                            foreach (FileInfo file in folder.GetFiles("*.txt", SearchOption.AllDirectories))
+                            {
+
+                                Console.WriteLine("Decrypting: " + file.FullName);
+                                string dePath = Path.GetFileNameWithoutExtension(file.Directory.Name);
+                                string txt = File.ReadAllText(file.FullName);
+                                string outputTxt = CatAndMouseGame.MouseGame3(txt);
+                                if (!Directory.Exists(path + @"\DecryptScripts\" + dePath))
+                                    Directory.CreateDirectory(path + @"\DecryptScripts\" + dePath);
+                                File.WriteAllText(path + @"\DecryptScripts\" + dePath + "\\" + file.Name, outputTxt);
+                            }
+                            break;
+                        }
+                    case 8:
+                        {
+                            JObject jp = JObject.Parse(File.ReadAllText(needEncrypt + "JP.txt"));
+                            JObject cn = JObject.Parse(File.ReadAllText(needEncrypt + "CN.txt"));
+                            JObject no = new JObject();
+                            foreach (JProperty jProperty in jp.Properties())
+                            {
+                                if (cn[jProperty.Name] != null)
+                                {
+                                    jp[jProperty.Name] = cn[jProperty.Name];
+                                }
+                                else
+                                {
+                                    no.Add(jProperty.Name, jProperty.Value);
+                                }
+                            }
+                            File.WriteAllText(needEncrypt + "LocalizationJpn.txt", jp.ToString());
+                            File.WriteAllText(needEncrypt + "noTranslation.txt", no.ToString());
+                            break;
+                        }
+                    case 9:
                         {
                             try
                             {
@@ -185,40 +224,27 @@ namespace FGOAssetsModifyTool
                             }
                             break;
                         }
-                    case 8:
+                    case 0:
                         {
-                            folder = new DirectoryInfo(path + @"\EncryptScript\");
-                            System.Collections.Generic.List<DirectoryInfo> paths = new System.Collections.Generic.List<DirectoryInfo>();
-                            foreach (DirectoryInfo NextFolder in folder.GetDirectories())
+                            string[] assetStore = File.ReadAllLines(path + @"\Android\AssetStorage_dec.txt");
+                            Console.WriteLine("Parsing json...");
+                            StringBuilder stringBuilder = new StringBuilder("{");
+                            for (int i = 2; i < assetStore.Length; ++i)
                             {
-                                paths.Add(NextFolder);
+                                string[] tmp = assetStore[i].Split(',');
+                                string assetName = tmp[tmp.Length - 1].Replace('/', '@') + ".unity3d";
+                                string name = CatAndMouseGame.getShaName(assetName);
+                                stringBuilder.Append("{\"assetName\":\"" + assetName + "\",");
+                                stringBuilder.Append("\"fileName\":\"" + name + "\"},");
                             }
-                            foreach (DirectoryInfo NextFile in paths)
-                            {
-                                foreach (FileInfo file in NextFile.GetFiles("*.txt"))
-                                {
-                                    Console.WriteLine("Decrypt: " + file.FullName);
-                                    string txt = File.ReadAllText(file.FullName);
-                                    string outputTxt = CatAndMouseGame.MouseGame3(txt);
-                                    if (!Directory.Exists(path + @"\DecryptScript\" + NextFile.Name))
-                                        Directory.CreateDirectory(path + @"\DecryptScript\" + NextFile.Name);
-                                    File.WriteAllText(path + @"\DecryptScript\" + NextFile.Name + '\\' + file.Name, outputTxt);
-                                }
-                            }
-                            foreach (FileInfo file in folder.GetFiles("*.txt"))
-                            {
-                                Console.WriteLine("Decrypt: " + file.FullName);
-                                string txt = File.ReadAllText(file.FullName);
-                                string outputTxt = CatAndMouseGame.MouseGame3(txt);
-                                if (!Directory.Exists(path + @"\DecryptScript\"))
-                                    Directory.CreateDirectory(path + @"\DecryptScript\");
-                                File.WriteAllText(path + @"\DecryptScript\" + file.Name, outputTxt);
-                            }
+                            stringBuilder.Remove(stringBuilder.Length - 1, 1);
+                            stringBuilder.Append("}");
+                            File.WriteAllText(path + @"\Android\AssetStorageName.json", stringBuilder.ToString());
                             break;
                         }
                     default:
                         {
-                            Console.WriteLine("Select a item pls");
+                            Console.WriteLine("请输入一个可接受的选项");
                             break;
                         }
                 }

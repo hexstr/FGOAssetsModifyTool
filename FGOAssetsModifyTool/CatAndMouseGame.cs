@@ -76,6 +76,20 @@ public class CatAndMouseGame
             }
         }
     }
+    public static string getShaName(string name)
+    {
+        SHA1 sha = new SHA1CryptoServiceProvider();
+        UTF8Encoding utf8Encoding = new UTF8Encoding();
+        byte[] bytes = utf8Encoding.GetBytes(name);
+        byte[] array = sha.ComputeHash(bytes);
+        StringBuilder stringBuilder = new StringBuilder();
+        foreach (byte b in array)
+        {
+            stringBuilder.AppendFormat("{0,0:x2}", (int)(b ^ 170));
+        }
+        stringBuilder.Append(".bin");
+        return stringBuilder.ToString();
+    }
     static CatAndMouseGame()
     {
         byte[] bytes = Encoding.UTF8.GetBytes("kzdMtpmzqCHAfx00saU1gIhTjYCuOD1JstqtisXsGYqRVcqrHRydj3k6vJCySu3g");
@@ -108,6 +122,15 @@ public class CatAndMouseGame
                 CatAndMouseGame.stageTop[i / 2] = bytes[i];
             }
         }
+    }
+    public static string CatGame3(string str)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(str);
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            bytes[i] = (byte)~bytes[i];
+        }
+        return CatAndMouseGame.CatHome(bytes, CatAndMouseGame.stageData, CatAndMouseGame.stageTop, true);
     }
     public static string MouseGame3(string str)
     {
@@ -160,6 +183,15 @@ public class CatAndMouseGame
         }
         return array;
     }
+    public static string CatGame8(string str)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(str);
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            bytes[i] = (byte)~bytes[i];
+        }
+        return CatAndMouseGame.CatHomeZ2(bytes, CatAndMouseGame.stageData, CatAndMouseGame.stageTop, true);
+    }
     public static string MouseGame8(string str)
     {
         byte[] data = Convert.FromBase64String(str);
@@ -199,6 +231,52 @@ public class CatAndMouseGame
                 BZip2OutputStream bzip2OutputStream = new BZip2OutputStream(cryptoStream, 1);
                 bzip2OutputStream.Write(data, 0, data.Length);
                 bzip2OutputStream.Close();
+            }
+            else
+            {
+                cryptoStream.Write(data, 0, data.Length);
+                cryptoStream.FlushFinalBlock();
+            }
+            result = memoryStream.ToArray();
+        }
+        catch (Exception)
+        {
+            result = null;
+        }
+        finally
+        {
+            if (memoryStream != null)
+            {
+                memoryStream.Close();
+            }
+            if (cryptoStream != null)
+            {
+                cryptoStream.Close();
+            }
+        }
+        return result;
+    }
+    public static byte[] CatHomeMainZ2(byte[] data, byte[] home, byte[] info, bool isCompress = false)
+    {
+        MemoryStream memoryStream = null;
+        CryptoStream cryptoStream = null;
+        byte[] result;
+        try
+        {
+            ICryptoTransform cryptoTransform = new RijndaelManaged
+            {
+                Padding = PaddingMode.PKCS7,
+                Mode = CipherMode.CBC,
+                KeySize = 256,
+                BlockSize = 256
+            }.CreateEncryptor(home, info);
+            memoryStream = new MemoryStream();
+            cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
+            if (isCompress)
+            {
+                GZipOutputStream gzipOutputStream = new GZipOutputStream(cryptoStream);
+                gzipOutputStream.Write(data, 0, data.Length);
+                gzipOutputStream.Close();
             }
             else
             {
@@ -308,7 +386,24 @@ public class CatAndMouseGame
         }
         return result;
     }
-
+    public static string CatHome(byte[] data, byte[] home, byte[] info, bool isCompress = false)
+    {
+        byte[] array = CatAndMouseGame.CatHomeMain(data, home, info, isCompress);
+        if (array != null)
+        {
+            return Convert.ToBase64String(array);
+        }
+        return null;
+    }
+    public static string CatHomeZ2(byte[] data, byte[] home, byte[] info, bool isCompress = false)
+    {
+        byte[] array = CatAndMouseGame.CatHomeMainZ2(data, home, info, isCompress);
+        if (array != null)
+        {
+            return Convert.ToBase64String(array);
+        }
+        return null;
+    }
     protected static byte[] stageTop = new byte[32];
 
     protected static byte[] stageData = new byte[32];
