@@ -22,10 +22,13 @@ namespace FGOAssetsModifyTool
                     "7: 解密剧情文本(scripts)\n" +
                     "8: 把国服文本转换为日服适用\n" +
                     "9: 计算CRC值\n" +
-                    "0: 导出资源名 - 实际文件名" +
+                    "0: 导出资源名 - 实际文件名\n" +
+                    "11: [gamedata/top]解密master(空的)\n" +
+                    "12: [gamedata/top]解密assetbundle(文件夹名)\n" +
+                    "13: [gamedata/top]解密webview(url)\n" +
                     "69: 切换为美服密钥\n" +
                     "67: 切换为国服密钥");
-                Console.WriteLine(CatAndMouseGame.getShaName("CharaFigure@3032000.unity3d"));
+                //Console.WriteLine(CatAndMouseGame.getShaName("CharaFigure@3032000.unity3d"));
                 int arg = Convert.ToInt32(Console.ReadLine());
                 string path = System.IO.Directory.GetCurrentDirectory();
                 DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
@@ -240,6 +243,34 @@ namespace FGOAssetsModifyTool
                             stringBuilder.Remove(stringBuilder.Length - 1, 1);
                             stringBuilder.Append("}");
                             File.WriteAllText(folder.FullName + "AssetStorageName.json", stringBuilder.ToString());
+                            break;
+                        }
+                    case 11:
+                        {
+                            string data = File.ReadAllText(folder.FullName + "master");
+                            Dictionary<string, byte[]> dictionary = (Dictionary<string, byte[]>)MasterDataUnpakcer.MouseGame2Unpacker(Convert.FromBase64String(data));
+                            break;
+                        }
+                    case 12:
+                        {
+                            string data = File.ReadAllText(folder.FullName + "assetbundle");
+                            Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpakcer.MouseInfoMsgPack(Convert.FromBase64String(data));
+                            Console.WriteLine("folder name: " + dictionary["folderName"].ToString());
+                            break;
+                        }
+                    case 13:
+                        {
+                            string data = File.ReadAllText(folder.FullName + "webview");
+                            Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpakcer.MouseGame2MsgPack(Convert.FromBase64String(data));
+                            string str = "baseURL: " + dictionary["baseURL"].ToString() + "\r\ncontactURL: " + dictionary["contactURL"].ToString() + "\r\n";
+                            Console.WriteLine(str);
+                            Dictionary<string, object> filePassInfo = (Dictionary<string, object>)dictionary["filePass"];
+                            foreach (var a in filePassInfo)
+                            {
+                                str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                            }
+                            File.WriteAllText(folder.FullName + "filePassInfo.txt", str);
+                            Console.WriteLine("Writing file to: " + folder.FullName + "filePassInfo.txt");
                             break;
                         }
                     default:
