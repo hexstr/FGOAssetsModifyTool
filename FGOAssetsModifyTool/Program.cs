@@ -28,7 +28,6 @@ namespace FGOAssetsModifyTool
                     "13: [gamedata/top]解密webview(url)\n" +
                     "69: 切换为美服密钥\n" +
                     "67: 切换为国服密钥");
-                //Console.WriteLine(CatAndMouseGame.getShaName("CharaFigure@3032000.unity3d"));
                 int arg = Convert.ToInt32(Console.ReadLine());
                 string path = System.IO.Directory.GetCurrentDirectory();
                 DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");

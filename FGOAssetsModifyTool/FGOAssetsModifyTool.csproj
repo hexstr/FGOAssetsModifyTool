@@ -52,7 +52,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetBundleDataUnpacker.cs" />
     <Compile Include="CatAndMouseGame.cs" />
     <Compile Include="Crc32.cs" />
     <Compile Include="FNV1a.cs" />
