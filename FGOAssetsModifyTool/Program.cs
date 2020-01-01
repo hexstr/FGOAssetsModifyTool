@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 namespace FGOAssetsModifyTool
 {
     class Program
@@ -23,7 +24,7 @@ namespace FGOAssetsModifyTool
                     "8: 把国服文本转换为日服适用\n" +
                     "9: 计算CRC值\n" +
                     "0: 导出资源名 - 实际文件名\n" +
-                    "11: [gamedata/top]解密master(空的)\n" +
+                    "11: [gamedata/top]解密master(卡池信息)\n" +
                     "12: [gamedata/top]解密assetbundle(文件夹名)\n" +
                     "13: [gamedata/top]解密webview(url)\n" +
                     "69: 切换为美服密钥\n" +
@@ -246,8 +247,15 @@ namespace FGOAssetsModifyTool
                         }
                     case 11:
                         {
+                            //卡池信息
                             string data = File.ReadAllText(folder.FullName + "master");
-                            Dictionary<string, byte[]> dictionary = (Dictionary<string, byte[]>)MasterDataUnpakcer.MouseGame2Unpacker(Convert.FromBase64String(data));
+                            Dictionary<string, byte[]> masterData = (Dictionary<string, byte[]>)MasterDataUnpakcer.MouseGame2Unpacker(Convert.FromBase64String(data));
+                            JObject job = new JObject();
+                            MiniMessagePacker miniMessagePacker = new MiniMessagePacker();
+                            List<Object> unpackeditem = (List<Object>)miniMessagePacker.Unpack(masterData["mstGacha"]);
+                            string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
+                            File.WriteAllText(folder.FullName + "masterData.txt", json);
+                            Console.WriteLine("Writing file to: " + folder.FullName + "masterData.txt");
                             break;
                         }
                     case 12:
@@ -268,8 +276,8 @@ namespace FGOAssetsModifyTool
                             {
                                 str += a.Key + ": " + a.Value.ToString() + "\r\n";
                             }
-                            File.WriteAllText(folder.FullName + "filePassInfo.txt", str);
-                            Console.WriteLine("Writing file to: " + folder.FullName + "filePassInfo.txt");
+                            File.WriteAllText(folder.FullName + "webview.txt", str);
+                            Console.WriteLine("Writing file to: " + folder.FullName + "webview.txt");
                             break;
                         }
                     default:

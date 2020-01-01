@@ -388,6 +388,5 @@ namespace FGOAssetsModifyTool
 		private byte[] tmp1 = new byte[8];
 		private Encoding encoder = Encoding.UTF8;
 		private static byte[] tmpStringHash = new byte[2000];
-		private static Dictionary<ulong, string> internPool;
 	}
 }
