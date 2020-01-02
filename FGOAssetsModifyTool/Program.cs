@@ -249,7 +249,7 @@ namespace FGOAssetsModifyTool
                         {
                             //卡池信息
                             string data = File.ReadAllText(folder.FullName + "master");
-                            Dictionary<string, byte[]> masterData = (Dictionary<string, byte[]>)MasterDataUnpakcer.MouseGame2Unpacker(Convert.FromBase64String(data));
+                            Dictionary<string, byte[]> masterData = (Dictionary<string, byte[]>)MasterDataUnpacker.MouseGame2Unpacker(Convert.FromBase64String(data));
                             JObject job = new JObject();
                             MiniMessagePacker miniMessagePacker = new MiniMessagePacker();
                             List<Object> unpackeditem = (List<Object>)miniMessagePacker.Unpack(masterData["mstGacha"]);
@@ -261,14 +261,20 @@ namespace FGOAssetsModifyTool
                     case 12:
                         {
                             string data = File.ReadAllText(folder.FullName + "assetbundle");
-                            Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpakcer.MouseInfoMsgPack(Convert.FromBase64String(data));
+                            Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpacker.MouseInfoMsgPack(Convert.FromBase64String(data));
+                            string str = null;
+                            foreach (var a in dictionary)
+                            {
+                                str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                            }
+                            File.WriteAllText(folder.FullName + "assetbundle.txt", str);
                             Console.WriteLine("folder name: " + dictionary["folderName"].ToString());
                             break;
                         }
                     case 13:
                         {
                             string data = File.ReadAllText(folder.FullName + "webview");
-                            Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpakcer.MouseGame2MsgPack(Convert.FromBase64String(data));
+                            Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpacker.MouseGame2MsgPack(Convert.FromBase64String(data));
                             string str = "baseURL: " + dictionary["baseURL"].ToString() + "\r\ncontactURL: " + dictionary["contactURL"].ToString() + "\r\n";
                             Console.WriteLine(str);
                             Dictionary<string, object> filePassInfo = (Dictionary<string, object>)dictionary["filePass"];

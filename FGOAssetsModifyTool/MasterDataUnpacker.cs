@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using ICSharpCode.SharpZipLib.GZip;
 namespace FGOAssetsModifyTool
 {
-    public class MasterDataUnpakcer
+    public class MasterDataUnpacker
     {
         public object Unpack(byte[] buf, int offset, int size)
         {
@@ -369,14 +369,14 @@ namespace FGOAssetsModifyTool
         }
         private string UnpackString(Stream s, long len)
         {
-            if (MasterDataUnpakcer.sb == null)
+            if (MasterDataUnpacker.sb == null)
             {
-                MasterDataUnpakcer.sb = new StringBuilder((int)len);
+                MasterDataUnpacker.sb = new StringBuilder((int)len);
             }
             else
             {
-                MasterDataUnpakcer.sb.Length = 0;
-                MasterDataUnpakcer.sb.EnsureCapacity((int)len);
+                MasterDataUnpacker.sb.Length = 0;
+                MasterDataUnpacker.sb.EnsureCapacity((int)len);
             }
             uint num = 0u;
             uint num2 = 0u;
@@ -389,7 +389,7 @@ namespace FGOAssetsModifyTool
                 {
                     if (num5 < 128u)
                     {
-                        MasterDataUnpakcer.sb.Append((char)num5);
+                        MasterDataUnpacker.sb.Append((char)num5);
                     }
                     else if ((num5 & 224u) == 192u)
                     {
@@ -429,20 +429,20 @@ namespace FGOAssetsModifyTool
                     {
                         if (num < 65536u)
                         {
-                            MasterDataUnpakcer.sb.Append((char)num);
+                            MasterDataUnpacker.sb.Append((char)num);
                         }
                         else if (num < 1114112u)
                         {
                             num -= 65536u;
-                            MasterDataUnpakcer.sb.Append((char)((num >> 10) + 55296u));
-                            MasterDataUnpakcer.sb.Append((char)((num & 1023u) + 56320u));
+                            MasterDataUnpacker.sb.Append((char)((num >> 10) + 55296u));
+                            MasterDataUnpacker.sb.Append((char)((num & 1023u) + 56320u));
                         }
                         num2 = 0u;
                     }
                 }
                 num4++;
             }
-            return MasterDataUnpakcer.sb.ToString();
+            return MasterDataUnpacker.sb.ToString();
         }
         private byte[] UnpackBinary(Stream s, long len)
         {
@@ -540,8 +540,8 @@ namespace FGOAssetsModifyTool
         public static object MouseHomeMaster(byte[] data, byte[] home, byte[] info, bool isCompress = false)
         {
             byte[] buf = MouseHomeSub(data, home, info, isCompress);
-            MasterDataUnpakcer masterDataUnpakcer = new MasterDataUnpakcer();
-            return masterDataUnpakcer.Unpack(buf);
+            MasterDataUnpacker MasterDataUnpacker = new MasterDataUnpacker();
+            return MasterDataUnpacker.Unpack(buf);
         }
         public static object MouseGame2Unpacker(byte[] data, bool isCompress = false)
         {
