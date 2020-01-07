@@ -520,7 +520,7 @@ namespace FGOAssetsModifyTool
                 }
                 result = array;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result = null;
             }

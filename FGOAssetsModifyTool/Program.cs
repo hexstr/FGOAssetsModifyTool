@@ -2,7 +2,6 @@
 using System.Text;
 using System.IO;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 namespace FGOAssetsModifyTool
@@ -11,6 +10,7 @@ namespace FGOAssetsModifyTool
     {
         static void displayMenu()
         {
+            Console.Clear();
             try
             {
                 Console.WriteLine(
@@ -212,18 +212,10 @@ namespace FGOAssetsModifyTool
                         }
                     case 9:
                         {
-                            try
+                            foreach (FileInfo file in encrypt.GetFiles("*.bin"))
                             {
-                                foreach (FileInfo file in encrypt.GetFiles("*.bin"))
-                                {
-                                    Console.WriteLine(file.Name + "\r\nsize: " + file.Length + "\r\ncrc: " + Crc32.Compute(File.ReadAllBytes(file.FullName)));
-                                    Console.WriteLine("======================================");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                Console.WriteLine(ex.StackTrace);
+                                Console.WriteLine(file.Name + "\r\nsize: " + file.Length + "\r\ncrc: " + Crc32.Compute(File.ReadAllBytes(file.FullName)));
+                                Console.WriteLine("======================================");
                             }
                             break;
                         }
@@ -231,18 +223,17 @@ namespace FGOAssetsModifyTool
                         {
                             string[] assetStore = File.ReadAllLines(folder.FullName + "AssetStorage_dec.txt");
                             Console.WriteLine("Parsing json...");
-                            StringBuilder stringBuilder = new StringBuilder("{");
+                            JArray jarray = new JArray();
                             for (int i = 2; i < assetStore.Length; ++i)
                             {
                                 string[] tmp = assetStore[i].Split(',');
                                 string assetName = tmp[tmp.Length - 1].Replace('/', '@') + ".unity3d";
-                                string name = CatAndMouseGame.getShaName(assetName);
-                                stringBuilder.Append("{\"assetName\":\"" + assetName + "\",");
-                                stringBuilder.Append("\"fileName\":\"" + name + "\"},");
+                                string fileName = CatAndMouseGame.getShaName(assetName);
+                                jarray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
                             }
-                            stringBuilder.Remove(stringBuilder.Length - 1, 1);
-                            stringBuilder.Append("}");
-                            File.WriteAllText(folder.FullName + "AssetStorageName.json", stringBuilder.ToString());
+                            JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
+                            String jsonWithConverter = JsonConvert.SerializeObject(jarray, serializerSettings);
+                            File.WriteAllText(folder.FullName + "AssetStorageName.json", jsonWithConverter.ToString());
                             break;
                         }
                     case 11:
