@@ -30,7 +30,7 @@ namespace FGOAssetsModifyTool
                     "69: 切换为美服密钥\n" +
                     "67: 切换为国服密钥");
                 int arg = Convert.ToInt32(Console.ReadLine());
-                string path = System.IO.Directory.GetCurrentDirectory();
+                string path = Directory.GetCurrentDirectory();
                 DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
                 DirectoryInfo decrypt = new DirectoryInfo(path + @"\Decrypt\");
                 DirectoryInfo encrypt = new DirectoryInfo(path + @"\Encrypt\");
@@ -223,17 +223,44 @@ namespace FGOAssetsModifyTool
                         {
                             string[] assetStore = File.ReadAllLines(folder.FullName + "AssetStorage_dec.txt");
                             Console.WriteLine("Parsing json...");
-                            JArray jarray = new JArray();
+                            JArray AudioArray = new JArray();
+                            //JArray MovieArray = new JArray();
+                            JArray AssetArray = new JArray();
                             for (int i = 2; i < assetStore.Length; ++i)
                             {
                                 string[] tmp = assetStore[i].Split(',');
-                                string assetName = tmp[tmp.Length - 1].Replace('/', '@') + ".unity3d";
-                                string fileName = CatAndMouseGame.getShaName(assetName);
-                                jarray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
+                                string assetName;
+                                string fileName;
+
+                                if (tmp[4].Contains("Audio"))
+                                {
+                                    assetName = tmp[tmp.Length - 1].Replace('/', '@');
+                                    fileName = CatAndMouseGame.GetMD5String(assetName);
+                                    AudioArray.Add(new JObject(new JProperty("audioName", assetName), new JProperty("fileName", fileName)));
+                                }
+                                //else if (tmp[4].Contains("Movie"))
+                                //{
+                                //    assetName = tmp[tmp.Length - 1].Replace('/', '@');
+                                //    fileName = CatAndMouseGame.GetMD5String(assetName);
+                                //    MovieArray.Add(new JObject(new JProperty("movieName", assetName), new JProperty("fileName", fileName)));
+                                //}
+                                else if(!tmp[4].Contains("Movie"))
+                                {
+                                    assetName = tmp[tmp.Length - 1].Replace('/', '@');
+                                    fileName = CatAndMouseGame.GetMD5String(assetName);
+                                    AssetArray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
+                                }
                             }
                             JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
-                            String jsonWithConverter = JsonConvert.SerializeObject(jarray, serializerSettings);
-                            File.WriteAllText(folder.FullName + "AssetStorageName.json", jsonWithConverter.ToString());
+                            String AudioArrayConverter = JsonConvert.SerializeObject(AudioArray, serializerSettings);
+                            //String MovieArrayConverter = JsonConvert.SerializeObject(MovieArray, serializerSettings);
+                            String AssetArrayConverter = JsonConvert.SerializeObject(AssetArray, serializerSettings);
+                            Console.WriteLine("Writing file to: AudioName.json");
+                            File.WriteAllText(folder.FullName + "AudioName.json", AudioArrayConverter.ToString());
+                            //Console.WriteLine("Writing file to: MovieName.json");
+                            //File.WriteAllText(folder.FullName + "MovieName.json", MovieArrayConverter.ToString());
+                            Console.WriteLine("Writing file to: AssetName.json");
+                            File.WriteAllText(folder.FullName + "AssetName.json", AssetArrayConverter.ToString());
                             break;
                         }
                     case 11:
