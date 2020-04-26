@@ -247,7 +247,7 @@ namespace FGOAssetsModifyTool
                                 else if(!tmp[4].Contains("Movie"))
                                 {
                                     assetName = tmp[tmp.Length - 1].Replace('/', '@') + ".unity3d";
-                                    fileName = CatAndMouseGame.GetMD5String(assetName);
+                                    fileName = CatAndMouseGame.getShaName(assetName);
                                     AssetArray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
                                 }
                             }
