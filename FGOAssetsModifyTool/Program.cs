@@ -4,6 +4,8 @@ using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+
 namespace FGOAssetsModifyTool
 {
 	class Program
@@ -22,16 +24,17 @@ namespace FGOAssetsModifyTool
 					"6: 加密剧情文本(scripts)\n" +
 					"7: 解密剧情文本(scripts)\n" +
 					"8: 把国服文本转换为日服适用\n" +
-					"9: 计算CRC值\n" +
+					"9: 从服务器下载游戏数据\n" +
 					"0: 导出资源名 - 实际文件名\n" +
-					"11: [gamedata/top]解密master(卡池信息)\n" +
-					"12: [gamedata/top]解密assetbundle(文件夹名)\n" +
+					"11: [gamedata/top]解密master(游戏数据)\n" +
+					"12: [gamedata/top]解密assetbundle(assets文件夹名)\n" +
 					"13: [gamedata/top]解密webview(url)\n" +
 					"69: 切换为美服密钥\n" +
 					"67: 切换为国服密钥");
 				int arg = Convert.ToInt32(Console.ReadLine());
 				string path = Directory.GetCurrentDirectory();
 				DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
+				DirectoryInfo gamedata = new DirectoryInfo(path + @"\Android\gamedata\");
 				DirectoryInfo decrypt = new DirectoryInfo(path + @"\Decrypt\");
 				DirectoryInfo encrypt = new DirectoryInfo(path + @"\Encrypt\");
 				DirectoryInfo decryptScripts = new DirectoryInfo(path + @"\DecryptScripts\");
@@ -186,7 +189,10 @@ namespace FGOAssetsModifyTool
 						}
 					case 8:
 						{
-							JObject jp = JObject.Parse(File.ReadAllText(decrypt.FullName + "JP.txt"));
+							string jptext = File.ReadAllText(decrypt.FullName + "JP.txt");
+							jptext = Regex.Replace(jptext, @".*//.*\n", "", RegexOptions.Multiline);
+							jptext = Regex.Replace(jptext, "\"$", "\",", RegexOptions.Multiline);
+							JObject jp = JObject.Parse(jptext);
 							JObject cn = JObject.Parse(File.ReadAllText(decrypt.FullName + "CN.txt"));
 							JObject no = new JObject();
 							foreach (JProperty jProperty in jp.Properties())
@@ -206,11 +212,32 @@ namespace FGOAssetsModifyTool
 						}
 					case 9:
 						{
-							foreach (FileInfo file in encrypt.GetFiles("*.bin"))
+							string result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.13.2");
+							JObject res = JObject.Parse(result);
+							if (res["response"][0]["fail"]["action"] != null)
 							{
-								Console.WriteLine(file.Name + "\r\nsize: " + file.Length + "\r\ncrc: " + Crc32.Compute(File.ReadAllBytes(file.FullName)));
-								Console.WriteLine("======================================");
+								if(res["response"][0]["fail"]["action"].ToString() == "app_version_up")
+								{
+									string tmp = res["response"][0]["fail"]["detail"].ToString();
+									tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
+									Console.WriteLine("new version: " + tmp.ToString());
+									result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=" + tmp.ToString());
+									res = JObject.Parse(result);
+								}
+								else
+								{
+									break;
+								}
 							}
+							if (!Directory.Exists(gamedata.FullName))
+								Directory.CreateDirectory(gamedata.FullName);
+							File.WriteAllText(gamedata.FullName + "raw", result);
+							File.WriteAllText(gamedata.FullName + "assetbundle", res["response"][0]["success"]["assetbundle"].ToString());
+							Console.WriteLine("Writing file to: " + gamedata.FullName + "assetbundle");
+							File.WriteAllText(gamedata.FullName + "master", res["response"][0]["success"]["master"].ToString());
+							Console.WriteLine("Writing file to: " + gamedata.FullName + "master");
+							File.WriteAllText(gamedata.FullName + "webview", res["response"][0]["success"]["webview"].ToString());
+							Console.WriteLine("Writing file to: " + gamedata.FullName + "webview");
 							break;
 						}
 					case 0:
@@ -255,33 +282,38 @@ namespace FGOAssetsModifyTool
 						}
 					case 11:
 						{
-							//卡池信息
-							string data = File.ReadAllText(folder.FullName + "master");
+							//游戏数据
+							string data = File.ReadAllText(gamedata.FullName + "master");
+							if (!Directory.Exists(gamedata.FullName + "unpack_master"))
+								Directory.CreateDirectory(gamedata.FullName + "unpack_master");
 							Dictionary<string, byte[]> masterData = (Dictionary<string, byte[]>)MasterDataUnpacker.MouseGame2Unpacker(Convert.FromBase64String(data));
 							JObject job = new JObject();
 							MiniMessagePacker miniMessagePacker = new MiniMessagePacker();
-							List<Object> unpackeditem = (List<Object>)miniMessagePacker.Unpack(masterData["mstGacha"]);
-							string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
-							File.WriteAllText(folder.FullName + "masterData.txt", json);
-							Console.WriteLine("Writing file to: " + folder.FullName + "masterData.txt");
+							foreach(KeyValuePair<string, byte[]> item in masterData)
+							{
+								List<object> unpackeditem = (List<object>)miniMessagePacker.Unpack(item.Value);
+								string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
+								File.WriteAllText(gamedata.FullName + "unpack_master/" + item.Key, json);
+								Console.WriteLine("Writing file to: " + gamedata.FullName + "unpack_master/" + item.Key);
+							}
 							break;
 						}
 					case 12:
 						{
-							string data = File.ReadAllText(folder.FullName + "assetbundle");
+							string data = File.ReadAllText(gamedata.FullName + "assetbundle");
 							Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpacker.MouseInfoMsgPack(Convert.FromBase64String(data));
 							string str = null;
 							foreach (var a in dictionary)
 							{
 								str += a.Key + ": " + a.Value.ToString() + "\r\n";
 							}
-							File.WriteAllText(folder.FullName + "assetbundle.txt", str);
+							File.WriteAllText(gamedata.FullName + "assetbundle.txt", str);
 							Console.WriteLine("folder name: " + dictionary["folderName"].ToString());
 							break;
 						}
 					case 13:
 						{
-							string data = File.ReadAllText(folder.FullName + "webview");
+							string data = File.ReadAllText(gamedata.FullName + "webview");
 							Dictionary<string, object> dictionary = (Dictionary<string, object>)MasterDataUnpacker.MouseGame2MsgPack(Convert.FromBase64String(data));
 							string str = "baseURL: " + dictionary["baseURL"].ToString() + "\r\ncontactURL: " + dictionary["contactURL"].ToString() + "\r\n";
 							Console.WriteLine(str);
@@ -290,8 +322,8 @@ namespace FGOAssetsModifyTool
 							{
 								str += a.Key + ": " + a.Value.ToString() + "\r\n";
 							}
-							File.WriteAllText(folder.FullName + "webview.txt", str);
-							Console.WriteLine("Writing file to: " + folder.FullName + "webview.txt");
+							File.WriteAllText(gamedata.FullName + "webview.txt", str);
+							Console.WriteLine("Writing file to: " + gamedata.FullName + "webview.txt");
 							break;
 						}
 					default:
