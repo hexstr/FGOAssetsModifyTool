@@ -34,6 +34,7 @@ namespace FGOAssetsModifyTool
 				int arg = Convert.ToInt32(Console.ReadLine());
 				string path = Directory.GetCurrentDirectory();
 				DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
+				DirectoryInfo scriptsFolder = new DirectoryInfo(path + @"\Android\Scripts");
 				DirectoryInfo gamedata = new DirectoryInfo(path + @"\Android\gamedata\");
 				DirectoryInfo decrypt = new DirectoryInfo(path + @"\Decrypt\");
 				DirectoryInfo encrypt = new DirectoryInfo(path + @"\Encrypt\");
@@ -161,29 +162,27 @@ namespace FGOAssetsModifyTool
 						{
 							foreach (FileInfo file in decryptScripts.GetFiles("*.txt", SearchOption.AllDirectories))
 							{
-
 								Console.WriteLine("Encrypting: " + file.FullName);
-								string dePath = Path.GetFileNameWithoutExtension(file.Directory.Name);
+								string ScriptsFolderName = Path.GetFileNameWithoutExtension(file.Directory.Name);
 								string txt = File.ReadAllText(file.FullName);
 								string outputTxt = CatAndMouseGame.CatGame3(txt);
-								if (!Directory.Exists(encryptScripts.FullName + dePath))
-									Directory.CreateDirectory(encryptScripts.FullName + dePath);
-								File.WriteAllText(encryptScripts.FullName + dePath + "\\" + file.Name, outputTxt);
+								if (!Directory.Exists(encryptScripts.FullName + ScriptsFolderName))
+									Directory.CreateDirectory(encryptScripts.FullName + ScriptsFolderName);
+								File.WriteAllText(encryptScripts.FullName + ScriptsFolderName + "\\" + file.Name, outputTxt);
 							}
 							break;
 						}
 					case 7:
 						{
-							foreach (FileInfo file in encryptScripts.GetFiles("*.txt", SearchOption.AllDirectories))
+							foreach (FileInfo file in scriptsFolder.GetFiles("*.txt", SearchOption.AllDirectories))
 							{
-
 								Console.WriteLine("Decrypting: " + file.FullName);
-								string dePath = Path.GetFileNameWithoutExtension(file.Directory.Name);
+								string ScriptsFolderName = Path.GetFileNameWithoutExtension(file.Directory.Name);
 								string txt = File.ReadAllText(file.FullName);
 								string outputTxt = CatAndMouseGame.MouseGame3(txt);
-								if (!Directory.Exists(encryptScripts.FullName + dePath))
-									Directory.CreateDirectory(encryptScripts.FullName + dePath);
-								File.WriteAllText(encryptScripts.FullName + dePath + "\\" + file.Name, outputTxt);
+								if (!Directory.Exists(decryptScripts.FullName + ScriptsFolderName))
+									Directory.CreateDirectory(decryptScripts.FullName + ScriptsFolderName);
+								File.WriteAllText(decryptScripts.FullName + ScriptsFolderName + "\\" + file.Name, outputTxt);
 							}
 							break;
 						}
