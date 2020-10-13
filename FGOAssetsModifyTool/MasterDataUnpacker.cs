@@ -551,27 +551,5 @@ namespace FGOAssetsModifyTool
             ownerData = Encoding.UTF8.GetBytes("pX6q6xK2UymhFKcaGHHUlfXqfTsWF0uH");
             return MouseHomeMaster(array, ownerData, ownerTop, true);
         }
-        public static object MouseHomeMsgPack(byte[] data, byte[] home, byte[] info, bool isCompress = false)
-        {
-            MiniMessagePacker miniMessagePacker = new MiniMessagePacker();
-            byte[] buf = MouseHomeSub(data, home, info, isCompress);
-            return miniMessagePacker.Unpack(buf);
-        }
-        public static object MouseInfoMsgPack(byte[] data)
-        {
-            byte[] array = new byte[data.Length - 32];
-            infoData = Encoding.UTF8.GetBytes("W0Juh4cFJSYPkebJB9WpswNF51oa6Gm7");
-            Array.Copy(data, 0, InfoTop, 0, 32);
-            Array.Copy(data, 32, array, 0, data.Length - 32);
-            return MouseHomeMsgPack(array, infoData, InfoTop, true);
-        }
-        public static object MouseGame2MsgPack(byte[] data, bool isCompress = false)
-        {
-            Array.Copy(data, 0, ownerTop, 0, 32);
-            byte[] array = new byte[data.Length - 32];
-            Array.Copy(data, 32, array, 0, data.Length - 32);
-            ownerData = Encoding.UTF8.GetBytes("pX6q6xK2UymhFKcaGHHUlfXqfTsWF0uH");
-            return MouseHomeMsgPack(array, ownerData, ownerTop, true);
-        }
     }
 }

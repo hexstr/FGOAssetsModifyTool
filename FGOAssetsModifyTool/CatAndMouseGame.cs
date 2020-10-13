@@ -199,15 +199,6 @@ public class CatAndMouseGame
         }
         return array;
     }
-    public static string CatGame8(string str)
-    {
-        byte[] bytes = Encoding.UTF8.GetBytes(str);
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            bytes[i] = (byte)~bytes[i];
-        }
-        return CatAndMouseGame.CatHomeZ2(bytes, CatAndMouseGame.stageData, CatAndMouseGame.stageTop, true);
-    }
     public static string MouseGame8(string str)
     {
         byte[] data = Convert.FromBase64String(str);
@@ -411,15 +402,7 @@ public class CatAndMouseGame
         }
         return null;
     }
-    public static string CatHomeZ2(byte[] data, byte[] home, byte[] info, bool isCompress = false)
-    {
-        byte[] array = CatAndMouseGame.CatHomeMainZ2(data, home, info, isCompress);
-        if (array != null)
-        {
-            return Convert.ToBase64String(array);
-        }
-        return null;
-    }
+
     protected static byte[] stageTop = new byte[32];
 
     protected static byte[] stageData = new byte[32];
