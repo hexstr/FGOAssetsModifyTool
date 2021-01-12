@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Net.Http;
 
+// https://line1-s1-bili-fate.bilibiligame.net/rongame_beta/rgfate/60_member/network/AssetStorage.txt	国服-Android
+// https://line1.s1.ios.fate.biligame.net/rongame_beta/rgfate/60_member/network/AssetStorage.txt		国服-iOS
+
 namespace FGOAssetsModifyTool
 {
 	class Program
@@ -20,24 +23,17 @@ namespace FGOAssetsModifyTool
 					"1: 加密\t" +
 					"2: 解密\n" +
 					"3: 解密AssetStorage.txt\t" +
-					"4: 把AssetStorage转换为Json格式\n" +
+					"4: 导出资源名 - 实际文件名\n" +
 					"5: 加密剧情文本(scripts)\n" +
 					"6: 解密剧情文本(scripts)\n" +
-					"7: 把国服文本转换为日服适用\n" +
+					"7: 汉化UI\n" +
 					"8: 从服务器下载游戏数据\n" +
 					"9: 解密游戏数据\n" +
-					"0: 导出资源名 - 实际文件名\n" +
-					"69: 切换为美服密钥\n" +
 					"67: 切换为国服密钥");
 				int arg = Convert.ToInt32(Console.ReadLine());
 				
 				switch (arg)
 				{
-					case 69:
-						{
-							CatAndMouseGame.EN();
-							break;
-						}
 					case 67:
 						{
 							CatAndMouseGame.CN();
@@ -75,42 +71,56 @@ namespace FGOAssetsModifyTool
 						}
 					case 4:
 						{
-							Console.WriteLine("Reading file from: " + Configuration.AssetsFolder.FullName + "AssetStorage_dec.txt");
-							string loadData = File.ReadAllText(Configuration.AssetsFolder.FullName + "AssetStorage_dec.txt");
-							string[] listData = null;
-							loadData = loadData.Trim();
-							int num2 = loadData.IndexOfAny(new char[] { '\r', '\n' });
-							loadData = loadData.Substring(num2 + 1);
-							byte[] bytes = Encoding.UTF8.GetBytes(loadData);
-							listData = loadData.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-							string[] array = listData[0].Split(',');
+							string[] assetStore = File.ReadAllLines(Configuration.AssetsFolder.FullName + "AssetStorage_dec.txt");
 							Console.WriteLine("Parsing json...");
-							int num4;
-							string attrib;
-							int size;
-							uint crc;
-							string name;
-							JArray AssetStorageJson = new JArray();
-							for (int i = 1; i < listData.Length; i++)
+							JArray AudioArray = new JArray();
+							JArray AssetArray = new JArray();
+							for (int i = 2; i < assetStore.Length; ++i)
 							{
-								array = listData[i].Split(',');
-								if (array.Length != 5)
+								string[] tmp = assetStore[i].Split(',');
+								string assetName;
+								string fileName;
+
+								if (tmp.Length == 5)
 								{
-									break;
+									if (tmp[4].Contains("Audio"))
+									{
+										assetName = tmp[4].Replace('/', '@');
+										fileName = CatAndMouseGame.GetMD5String(assetName);
+										AudioArray.Add(new JObject(new JProperty("audioName", assetName), new JProperty("fileName", fileName)));
+									}
+									else if (!tmp[4].Contains("Movie"))
+									{
+										assetName = tmp[4].Replace('/', '@') + ".unity3d";
+										fileName = CatAndMouseGame.getShaName(assetName);
+										AssetArray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
+									}
 								}
-								num4 = int.Parse(array[0].Trim());
-								attrib = array[1];
-								size = int.Parse(array[2].Trim());
-								crc = uint.Parse(array[3].Trim());
-								name = array[4];
-								AssetStorageJson.Add(new JObject(
-									new JProperty("num4", num4.ToString()), new JProperty("attrib", attrib.ToString()),
-									new JProperty("size", size.ToString()), new JProperty("crc", crc.ToString()),
-									new JProperty("name", name)
-									));
+								else if (tmp.Length == 7)
+								{
+									// 国服安装包中提取的奇葩格式
+									if (tmp[4].Contains("Audio"))
+									{
+										assetName = tmp[6].Replace('/', '@');
+										fileName = CatAndMouseGame.GetMD5String(assetName);
+										AudioArray.Add(new JObject(new JProperty("audioName", assetName), new JProperty("fileName", fileName)));
+									}
+									else if (!tmp[4].Contains("Movie"))
+									{
+										assetName = tmp[4] + ".unity3d";
+										fileName = tmp[0] + ".bin";
+										AssetArray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
+									}
+								}
+								else
+								{
+									throw new Exception("Not supported format.");
+								}
 							}
-							File.WriteAllText(Configuration.AssetsFolder.FullName + "AssetStorage.json", AssetStorageJson.ToString());
-							Console.WriteLine("Writing file to: " + Configuration.AssetsFolder.FullName + "AssetStorage.json");
+							Console.WriteLine("Writing file to: AudioName.json");
+							File.WriteAllText(Configuration.AssetsFolder.FullName + "AudioName.json", AudioArray.ToString());
+							Console.WriteLine("Writing file to: AssetName.json");
+							File.WriteAllText(Configuration.AssetsFolder.FullName + "AssetName.json", AssetArray.ToString());
 							break;
 						}
 					case 5:
@@ -120,6 +130,8 @@ namespace FGOAssetsModifyTool
 								Console.WriteLine("Encrypting: " + file.FullName);
 								string ScriptsFolderName = Path.GetFileNameWithoutExtension(file.Directory.Name);
 								string outputTxt = CatAndMouseGame.CatGame3(File.ReadAllText(file.FullName));
+								if (!Directory.Exists(Configuration.EncryptedScriptsFolder + ScriptsFolderName))
+									Directory.CreateDirectory(Configuration.EncryptedScriptsFolder + ScriptsFolderName);
 								File.WriteAllText(Configuration.EncryptedScriptsFolder + ScriptsFolderName + "\\" + file.Name, outputTxt);
 							}
 							break;
@@ -131,6 +143,8 @@ namespace FGOAssetsModifyTool
 								Console.WriteLine("Decrypting: " + file.FullName);
 								string ScriptsFolderName = Path.GetFileNameWithoutExtension(file.Directory.Name);
 								string outputTxt = CatAndMouseGame.MouseGame3(File.ReadAllText(file.FullName));
+								if (!Directory.Exists(Configuration.DecryptedScriptsFolder.FullName + ScriptsFolderName))
+									Directory.CreateDirectory(Configuration.DecryptedScriptsFolder.FullName + ScriptsFolderName);
 								File.WriteAllText(Configuration.DecryptedScriptsFolder.FullName + ScriptsFolderName + "\\" + file.Name, outputTxt);
 							}
 							break;
@@ -177,8 +191,7 @@ namespace FGOAssetsModifyTool
 								}
 								else
 								{
-									Console.WriteLine(res["response"][0]["fail"]["detail"]);
-									break;
+									throw new Exception(res["response"][0]["fail"]["detail"].ToString());
 								}
 							}
 							File.WriteAllText(Configuration.GameDataFolder + "raw", Result);
@@ -199,46 +212,6 @@ namespace FGOAssetsModifyTool
 								File.WriteAllText(Configuration.GameDataUnpackFolder + item.Key, json);
 								Console.WriteLine("Writing file to: " + Configuration.GameDataUnpackFolder + item.Key);
 							}
-							break;
-						}
-					case 0:
-						{
-							string[] assetStore = File.ReadAllLines(Configuration.AssetsFolder.FullName + "AssetStorage_dec.txt");
-							Console.WriteLine("Parsing json...");
-							JArray AudioArray = new JArray();
-							//JArray MovieArray = new JArray();
-							JArray AssetArray = new JArray();
-							for (int i = 2; i < assetStore.Length; ++i)
-							{
-								string[] tmp = assetStore[i].Split(',');
-								string assetName;
-								string fileName;
-
-								if (tmp[4].Contains("Audio"))
-								{
-									assetName = tmp[tmp.Length - 1].Replace('/', '@');
-									fileName = CatAndMouseGame.GetMD5String(assetName);
-									AudioArray.Add(new JObject(new JProperty("audioName", assetName), new JProperty("fileName", fileName)));
-								}
-								//else if (tmp[4].Contains("Movie"))
-								//{
-								//    assetName = tmp[tmp.Length - 1].Replace('/', '@');
-								//    fileName = CatAndMouseGame.GetMD5String(assetName);
-								//    MovieArray.Add(new JObject(new JProperty("movieName", assetName), new JProperty("fileName", fileName)));
-								//}
-								else if (!tmp[4].Contains("Movie"))
-								{
-									assetName = tmp[tmp.Length - 1].Replace('/', '@') + ".unity3d";
-									fileName = CatAndMouseGame.getShaName(assetName);
-									AssetArray.Add(new JObject(new JProperty("assetName", assetName), new JProperty("fileName", fileName)));
-								}
-							}
-							Console.WriteLine("Writing file to: AudioName.json");
-							File.WriteAllText(Configuration.AssetsFolder.FullName + "AudioName.json", AudioArray.ToString());
-							//Console.WriteLine("Writing file to: MovieName.json");
-							//File.WriteAllText(Configuration.AssetsFolder.FullName + "MovieName.json", MovieArray.ToString());
-							Console.WriteLine("Writing file to: AssetName.json");
-							File.WriteAllText(Configuration.AssetsFolder.FullName + "AssetName.json", AssetArray.ToString());
 							break;
 						}
 					default:
