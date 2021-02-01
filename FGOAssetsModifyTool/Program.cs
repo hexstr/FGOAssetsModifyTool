@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
@@ -29,7 +28,8 @@ namespace FGOAssetsModifyTool
 					"7: 汉化UI\n" +
 					"8: 从服务器下载游戏数据\n" +
 					"9: 解密游戏数据\n" +
-					"67: 切换为国服密钥");
+					"67: 切换为国服密钥\n" +
+					"69: 切换为美服密钥");
 				int arg = Convert.ToInt32(Console.ReadLine());
 				
 				switch (arg)
@@ -37,6 +37,11 @@ namespace FGOAssetsModifyTool
 					case 67:
 						{
 							CatAndMouseGame.CN();
+							break;
+						}
+					case 69:
+						{
+							CatAndMouseGame.EN();
 							break;
 						}
 					case 1:

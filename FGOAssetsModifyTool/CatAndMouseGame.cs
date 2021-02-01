@@ -59,6 +59,39 @@ public class CatAndMouseGame
             }
         }
     }
+    public static void EN()
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes("xaVPXPtrkXlUZsJRa3Eu1o1kSDYtjlwhoRQI2MHq2Q4szmpVvDcbmpi7UIZF9Rle");
+        byte[] bytes2 = Encoding.UTF8.GetBytes("FEq45VzsnHv8ynuLIGGF9qRA2tJ6vJ61FkG6KliUnD77cN7pvveVAH5gcPeLEzOR");
+        for (int i = 0; i < bytes2.Length / 4; i++)
+        {
+            if (i % 2 == 0)
+            {
+                CatAndMouseGame.baseData[i / 2 * 4] = bytes2[i * 4];
+                CatAndMouseGame.baseData[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
+                CatAndMouseGame.baseData[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
+                CatAndMouseGame.baseData[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
+            }
+            else
+            {
+                CatAndMouseGame.baseTop[i / 2 * 4] = bytes2[i * 4];
+                CatAndMouseGame.baseTop[i / 2 * 4 + 1] = bytes2[i * 4 + 1];
+                CatAndMouseGame.baseTop[i / 2 * 4 + 2] = bytes2[i * 4 + 2];
+                CatAndMouseGame.baseTop[i / 2 * 4 + 3] = bytes2[i * 4 + 3];
+            }
+        }
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            if (i % 2 == 0)
+            {
+                CatAndMouseGame.stageData[i / 2] = bytes[i];
+            }
+            else
+            {
+                CatAndMouseGame.stageTop[i / 2] = bytes[i];
+            }
+        }
+    }
     public static string getShaName(string name)
     {
         SHA1 sha = new SHA1CryptoServiceProvider();
