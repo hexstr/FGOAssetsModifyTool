@@ -36,7 +36,7 @@ namespace FGOAssetsModifyTool
 			}
 		}
 
-		private FileType fileType;
+		public FileType fileType;
 		public CatAndMouseGame(FileType _)
 		{
 			fileType = _;
@@ -256,14 +256,13 @@ namespace FGOAssetsModifyTool
 				else
 					info[i] = bytes[i];
 		}
-
 		public byte[] MouseGame4(byte[] data, string key)
 		{
 			byte[] info;
 			byte[] home;
 			OtherHomeBuilding(key, out home, out info);
 
-			byte[] array = MouseHomeMain(data, baseData, baseTop, false);
+			byte[] array = MouseHomeMain(data, home, info, false);
 			if (array == null)
 			{
 				Console.WriteLine("MouseHomeMain failed");
