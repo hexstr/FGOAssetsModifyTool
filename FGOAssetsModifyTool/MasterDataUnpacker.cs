@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Security.Cryptography;
-using ICSharpCode.SharpZipLib.GZip;
+
 namespace FGOAssetsModifyTool
 {
     public class MasterDataUnpacker
@@ -486,56 +485,7 @@ namespace FGOAssetsModifyTool
         protected static byte[] infoData = new byte[32];
         public static byte[] MouseHomeSub(byte[] data, byte[] home, byte[] info, bool isCompress = false)
         {
-            MemoryStream memoryStream = null;
-            CryptoStream cryptoStream = null;
-            byte[] result;
-            try
-            {
-                ICryptoTransform cryptoTransform = new RijndaelManaged
-                {
-                    Padding = PaddingMode.PKCS7,
-                    Mode = CipherMode.CBC,
-                    KeySize = 256,
-                    BlockSize = 256
-                }.CreateDecryptor(home, info);
-                byte[] array = new byte[data.Length];
-                memoryStream = new MemoryStream(data);
-                cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Read);
-                cryptoStream.Read(array, 0, array.Length);
-                if (isCompress)
-                {
-                    MemoryStream memoryStream2 = new MemoryStream();
-                    MemoryStream memoryStream3 = new MemoryStream(array);
-                    GZipInputStream gzipInputStream = new GZipInputStream(memoryStream3);
-                    byte[] array2 = new byte[16384];
-                    int num;
-                    while ((num = gzipInputStream.Read(array2, 0, array2.Length)) > 0)
-                    {
-                        memoryStream2.Write(array2, 0, num);
-                    }
-                    gzipInputStream.Close();
-                    array = memoryStream2.ToArray();
-                    memoryStream3.Close();
-                    memoryStream2.Close();
-                }
-                result = array;
-            }
-            catch (Exception)
-            {
-                result = null;
-            }
-            finally
-            {
-                if (memoryStream != null)
-                {
-                    memoryStream.Close();
-                }
-                if (cryptoStream != null)
-                {
-                    cryptoStream.Close();
-                }
-            }
-            return result;
+            return CatAndMouseGame.MouseHomeMain(data, home, info, isCompress);
         }
         public static object MouseHomeMaster(byte[] data, byte[] home, byte[] info, bool isCompress = false)
         {

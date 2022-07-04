@@ -243,6 +243,35 @@ namespace FGOAssetsModifyTool
 			}
 			return Encoding.UTF8.GetString(array).TrimEnd(new char[1]);
 		}
+
+
+		public static void OtherHomeBuilding(string data, out byte[] home, out byte[] info)
+		{
+			var bytes = Encoding.UTF8.GetBytes(data);
+			home = new byte[32];
+			info = new byte[32];
+			for (var i = 0; i < bytes.Length; i++)
+				if (i == 0)
+					home[i] = bytes[i];
+				else
+					info[i] = bytes[i];
+		}
+
+		public byte[] MouseGame4(byte[] data, string key)
+		{
+			byte[] info;
+			byte[] home;
+			OtherHomeBuilding(key, out home, out info);
+
+			byte[] array = MouseHomeMain(data, baseData, baseTop, false);
+			if (array == null)
+			{
+				Console.WriteLine("MouseHomeMain failed");
+				return null;
+			}
+			return array;
+		}
+
 		public byte[] CatHomeMain(byte[] data, byte[] home, byte[] info, bool isCompress = false)
 		{
 			byte[] result = null;
@@ -288,8 +317,7 @@ namespace FGOAssetsModifyTool
 			}
 			return result;
 		}
-
-		public byte[] MouseHomeMain(byte[] data, byte[] home, byte[] info, bool isCompress = false)
+		public static byte[] MouseHomeMain(byte[] data, byte[] home, byte[] info, bool isCompress = false)
 		{
 			byte[] result = null;
 			try
