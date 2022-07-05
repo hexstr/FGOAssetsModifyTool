@@ -59,7 +59,7 @@ namespace FGOAssetsModifyTool
 								string assetbundlekey_str = File.ReadAllText($"{Configuration.GameDataUnpackAssetBundleFolder}assetbundleKey.json");
 								JsonArray assetbundlekey = JsonNode.Parse(assetbundlekey_str).AsArray();
 
-								foreach(JsonObject item in assetbundlekey)
+								foreach (var item in assetbundlekey)
 								{
 									AssetBundleKeyList.Add(item["id"].ToString(), item["decryptKey"].ToString());
 								}
@@ -73,7 +73,7 @@ namespace FGOAssetsModifyTool
 							{
 								string assetbundleextrakeytype_str = File.ReadAllText($"{Configuration.AssetsFolder.FullName}AssetListWithExtraKeyType.json");
 								JsonArray assetbundleextrakeytype = JsonNode.Parse(assetbundleextrakeytype_str).AsArray();
-								foreach(var item in assetbundleextrakeytype)
+								foreach (var item in assetbundleextrakeytype)
 								{
 									AssetBundleWithExtraKey.Add(item["FileName"].ToString(), item["AssetName"].ToString());
 								}
@@ -115,7 +115,7 @@ namespace FGOAssetsModifyTool
 								string key;
 								if (AssetBundleWithExtraKey.TryGetValue(file.Name, out keyType))
 								{
-									if(AssetBundleKeyList.TryGetValue(keyType, out key))
+									if (AssetBundleKeyList.TryGetValue(keyType, out key))
 									{
 										output = decryptor.MouseGame4(raw, key);
 									}
@@ -127,7 +127,7 @@ namespace FGOAssetsModifyTool
 								else
 								{
 									output = decryptor.MouseGame4(raw);
-								}						
+								}
 								File.WriteAllBytes($"{Configuration.DecryptedFolder.FullName}{file.Name}", output);
 							}
 							break;
@@ -313,7 +313,7 @@ namespace FGOAssetsModifyTool
 									var options = new JsonSerializerOptions
 									{
 										WriteIndented = true,
-										Encoder = JavaScriptEncoder.Create(UnicodeRanges.All, UnicodeRanges.All)
+										Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
 									};
 									string result = JsonSerializer.Serialize(BundleData, options);
 									File.WriteAllText($"{Configuration.GameDataUnpackAssetBundleFolder}assetbundle.json", result);
@@ -366,7 +366,7 @@ namespace FGOAssetsModifyTool
 										var options = new JsonSerializerOptions
 										{
 											WriteIndented = true,
-											Encoder = JavaScriptEncoder.Create(UnicodeRanges.All, UnicodeRanges.All)
+											Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
 										};
 										string result = JsonSerializer.Serialize(item.Value, options);
 										File.WriteAllText($"{Configuration.GameDataUnpackFolder}{item.Key}", result);
@@ -410,25 +410,37 @@ namespace FGOAssetsModifyTool
 						{
 							string JPText = File.ReadAllText(Configuration.DecryptedFolder.FullName + "JP.txt");
 							string CNText = File.ReadAllText(Configuration.DecryptedFolder.FullName + "CN.txt");
-							JPText = Regex.Replace(JPText, @".*//.*\n", "", RegexOptions.Multiline);
-							JPText = Regex.Replace(JPText, "\"$", "\",", RegexOptions.Multiline);
 
-							JsonObject JP = JsonNode.Parse(JPText).AsObject();
+							JPText = Regex.Replace(JPText, "\"\n", "\",\n");
+							JPText = Regex.Replace(JPText, "\",,\n", "\",\n");
+							JPText = JPText.Replace("\u00A0", "");
+							JPText = Regex.Replace(JPText, "\",\n\n}", "\"\n}");
+
+							var options = new JsonSerializerOptions
+							{
+								WriteIndented = true,
+								Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+								ReadCommentHandling = JsonCommentHandling.Skip,
+								AllowTrailingCommas = true // Not working
+							};
+							var JP = JsonSerializer.Deserialize<Dictionary<string, string>>(JPText, options);
 							JsonObject CN = JsonNode.Parse(CNText).AsObject();
 							JsonObject NoTranslation = new();
 							foreach (var node in JP)
 							{
 								if (CN[node.Key] != null)
 								{
-									JP[node.Key] = CN[node.Key];
+									JP[node.Key] = CN[node.Key].ToString();
 								}
 								else
 								{
 									NoTranslation.Add(node.Key, node.Value);
 								}
 							}
-							File.WriteAllText(Configuration.DecryptedFolder.FullName + "LocalizationJpn.txt", JP.ToString());
-							File.WriteAllText(Configuration.DecryptedFolder.FullName + "Non-Translation.txt", NoTranslation.ToString());
+							string LocalizationJpn = JsonSerializer.Serialize(JP, options);
+							string Non_Translation = JsonSerializer.Serialize(NoTranslation, options);
+							File.WriteAllText(Configuration.DecryptedFolder.FullName + "LocalizationJpn.txt", LocalizationJpn);
+							File.WriteAllText(Configuration.DecryptedFolder.FullName + "Non-Translation.txt", Non_Translation);
 							break;
 						}
 					default:
