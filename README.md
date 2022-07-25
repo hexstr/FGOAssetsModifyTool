@@ -1,5 +1,6 @@
 # FGOAssetsModifyTool
-Fate/GO资源解密工具
+Fate/GO资源解密工具  
+如果你需要的是在游戏中替换资源的功能，可以查看[这个分支](https://github.com/hexstr/FGOAssetsModifyTool/tree/module)
 
 ## 使用
 新建一个文件夹`Android`把需要解密的资源扔进去；日服的资源文件所在目录为`/sdcard/Android/data/com.aniplex.fategrandorder/files/data/d713`  
