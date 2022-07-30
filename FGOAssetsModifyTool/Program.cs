@@ -86,12 +86,38 @@ namespace FGOAssetsModifyTool
 						}
 					case 1:
 						{
+							if (decryptor.fileType == CatAndMouseGame.FileType.JP)
+							{
+								if (AssetBundleKeyList.Count == 0 || AssetBundleWithExtraKey.Count == 0)
+								{
+									Console.WriteLine("先载入assetbundleinfo");
+									break;
+								}
+							}
+
 							foreach (FileInfo file in Configuration.DecryptedFolder.GetFiles("*.bin"))
 							{
 								Console.WriteLine("Encrypt: " + file.FullName);
 								byte[] raw = File.ReadAllBytes(file.FullName);
-								byte[] output = decryptor.CatGame4(raw);
-								File.WriteAllBytes(Configuration.EncryptedFolder + file.Name, output);
+								byte[] output = null;
+								string keyType;
+								string key;
+								if (AssetBundleWithExtraKey.TryGetValue(file.Name, out keyType))
+								{
+									if (AssetBundleKeyList.TryGetValue(keyType, out key))
+									{
+										output = decryptor.CatGame4(raw, key);
+									}
+									else
+									{
+										Console.WriteLine($"No such value for this key type: {keyType}");
+									}
+								}
+								else
+								{
+									output = decryptor.CatGame4(raw);
+								}
+								File.WriteAllBytes($"{Configuration.EncryptedFolder}{file.Name}", output);
 							}
 							break;
 						}

@@ -256,6 +256,20 @@ namespace FGOAssetsModifyTool
 				else
 					info[i] = bytes[i];
 		}
+		public byte[] CatGame4(byte[] data, string key)
+		{
+			byte[] info;
+			byte[] home;
+			OtherHomeBuilding(key, out home, out info);
+
+			byte[] array = CatHomeMain(data, home, info, false);
+			if (array == null)
+			{
+				Console.WriteLine("CatHomeMain failed");
+				return null;
+			}
+			return array;
+		}
 		public byte[] MouseGame4(byte[] data, string key)
 		{
 			byte[] info;
@@ -281,13 +295,13 @@ namespace FGOAssetsModifyTool
 				var keyParam = new KeyParameter(home);
 				var keyParamWithIV = new ParametersWithIV(keyParam, info, 0, 32);
 				cipher.Init(true, keyParamWithIV);
-				var comparisonBytes = new byte[data.Length];
-				var length = cipher.ProcessBytes(data, comparisonBytes, 0);
-				cipher.DoFinal(comparisonBytes, length);
+				var buffer = new byte[cipher.GetOutputSize(data.Length)];
+				var length = cipher.ProcessBytes(data, buffer, 0);
+				cipher.DoFinal(buffer, length);
 
 				if (isCompress)
 				{
-					using (MemoryStream inStream = new MemoryStream(comparisonBytes))
+					using (MemoryStream inStream = new MemoryStream(buffer))
 					{
 						using (MemoryStream outStream = new MemoryStream())
 						{
@@ -305,7 +319,7 @@ namespace FGOAssetsModifyTool
 				}
 				else
 				{
-					return comparisonBytes;
+					return buffer;
 				}
 			}
 			catch (Exception ex)
@@ -326,7 +340,7 @@ namespace FGOAssetsModifyTool
 				var keyParam = new KeyParameter(home);
 				var keyParamWithIV = new ParametersWithIV(keyParam, info, 0, 32);
 				cipher.Init(false, keyParamWithIV);
-				byte[] buffer = new byte[data.Length];
+				var buffer = new byte[cipher.GetOutputSize(data.Length)];
 				var length = cipher.ProcessBytes(data, buffer, 0);
 				cipher.DoFinal(buffer, length);
 
