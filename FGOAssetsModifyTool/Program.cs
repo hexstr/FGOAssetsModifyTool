@@ -173,7 +173,6 @@ namespace FGOAssetsModifyTool
 									Console.WriteLine("new version: " + NewVersion.ToString());
 									Response = Client.GetAsync("https://game.fate-go.jp/gamedata/top?appVer=" + NewVersion.ToString());
 									Result = await Response.Result.Content.ReadAsStringAsync();
-									res = JsonNode.Parse(Result).AsObject();
 								}
 								else
 								{
@@ -228,6 +227,7 @@ namespace FGOAssetsModifyTool
 							Console.WriteLine("Parsing AssetStorage...");
 							List<Asset> AudioList = new();
 							List<Asset> AssetList = new();
+							List<Asset> MovieList = new();
 							List<Asset> AssetListWithExtraKeyType = new();
 							string[] AssetStore = File.ReadAllLines($"{Configuration.AssetsFolder.FullName}AssetStorage_dec.txt");
 
@@ -250,10 +250,20 @@ namespace FGOAssetsModifyTool
 											FileName = fileName,
 										});
 									}
-									else if (!tmp[4].Contains("Movie"))
+									else if (tmp[4].Contains("Movie"))
+									{
+										assetName = tmp[4].Replace('/', '@');
+										fileName = CatAndMouseGame.GetMD5String(assetName);
+										MovieList.Add(new Asset
+										{
+											AssetName = assetName,
+											FileName = fileName,
+										});
+									}
+									else
 									{
 										assetName = tmp[4].Replace('/', '@') + ".unity3d";
-										fileName = decryptor.getShaName(assetName);
+										fileName = CatAndMouseGame.GetShaName(assetName);
 
 										if (tmp.Length == 6)
 										{
@@ -283,7 +293,11 @@ namespace FGOAssetsModifyTool
 									{
 										AudioList.Add(asset);
 									}
-									else if (!tmp[4].Contains("Movie"))
+									else if (tmp[4].Contains("Movie"))
+									{
+										MovieList.Add(asset);
+									}
+									else
 									{
 										AssetList.Add(asset);
 									}
@@ -302,6 +316,10 @@ namespace FGOAssetsModifyTool
 							result = JsonSerializer.Serialize(AssetList, options);
 							Console.WriteLine("Writing file to: AssetName.json");
 							File.WriteAllText($"{Configuration.AssetsFolder.FullName}AssetName.json", result);
+
+							result = JsonSerializer.Serialize(MovieList, options);
+							Console.WriteLine("Writing file to: MovieName.json");
+							File.WriteAllText($"{Configuration.AssetsFolder.FullName}MovieName.json", result);
 
 							result = JsonSerializer.Serialize(AssetListWithExtraKeyType, options);
 							Console.WriteLine("Writing file to: AssetListWithExtraKeyType.json");

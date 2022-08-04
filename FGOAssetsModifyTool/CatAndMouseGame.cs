@@ -35,7 +35,20 @@ namespace FGOAssetsModifyTool
 				return sb.ToString();
 			}
 		}
-
+		public static string GetShaName(string name)
+		{
+			SHA1 sha = SHA1.Create();
+			UTF8Encoding utf8Encoding = new UTF8Encoding();
+			byte[] bytes = utf8Encoding.GetBytes(name);
+			byte[] array = sha.ComputeHash(bytes);
+			StringBuilder stringBuilder = new StringBuilder();
+			foreach (byte b in array)
+			{
+				stringBuilder.AppendFormat("{0,0:x2}", b ^ 170);
+			}
+			stringBuilder.Append(".bin");
+			return stringBuilder.ToString();
+		}
 		public FileType fileType;
 		public CatAndMouseGame(FileType _)
 		{
@@ -154,20 +167,6 @@ namespace FGOAssetsModifyTool
 					stageTop[i / 2] = bytes[i];
 				}
 			}
-		}
-		public string getShaName(string name)
-		{
-			SHA1 sha = SHA1.Create();
-			UTF8Encoding utf8Encoding = new UTF8Encoding();
-			byte[] bytes = utf8Encoding.GetBytes(name);
-			byte[] array = sha.ComputeHash(bytes);
-			StringBuilder stringBuilder = new StringBuilder();
-			foreach (byte b in array)
-			{
-				stringBuilder.AppendFormat("{0,0:x2}", b ^ 170);
-			}
-			stringBuilder.Append(".bin");
-			return stringBuilder.ToString();
 		}
 		public string CatGame3(string str)
 		{
