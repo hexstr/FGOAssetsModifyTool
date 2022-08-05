@@ -10,8 +10,15 @@
 - 替换剧情文本
 
 ## 使用
+模块的工作目录是`/sdcard/Android/data/包名/files/Mod/`
 
-直接下载打包好的`*.chara`文件，放入`/sdcard/Android/data/com.bilibili.fatego/files/Mod/`下即可。
+在`Release`中有预制的几个文件，其中：
+- 为日服推荐下载的`LocalizationJpn.txt`
+- 为日服推荐下载的`0805.script`
+- 为国服推荐下载的`42.chara`
+- 可选的`Master.chara`和`Custom.chara`
+
+直接下载打包好的`*.chara`文件，放入工作目录下即可。
 
 或者自己做，比较麻烦，需要自己`ps`处理图片，可以下载`psd`自己改。
 
@@ -47,8 +54,10 @@
 | |---NarrowFigure
 | | |---2500100.png
 | | |---603700.png
+|
+|---2b1b0ee6
+|---0805.script
+|---42.chara
 |---LocalizationJpn.txt
-|---47+.chara
-|---0714.script
 ```
 
