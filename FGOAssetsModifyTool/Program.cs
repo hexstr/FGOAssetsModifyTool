@@ -231,7 +231,7 @@ namespace FGOAssetsModifyTool
 							List<Asset> AssetListWithExtraKeyType = new();
 							string[] AssetStore = File.ReadAllLines($"{Configuration.AssetsFolder.FullName}AssetStorage_dec.txt");
 
-							for (int i = 2; i < AssetStore.Length - 1; ++i)
+							for (int i = 2; i < AssetStore.Length; ++i)
 							{
 								string[] tmp = AssetStore[i].Split(',');
 								string assetName;
@@ -240,6 +240,7 @@ namespace FGOAssetsModifyTool
 
 								if (tmp[0] == "1")
 								{
+									// FGO download from server.
 									if (tmp[4].Contains("Audio"))
 									{
 										assetName = tmp[4].Replace('/', '@');
@@ -280,6 +281,29 @@ namespace FGOAssetsModifyTool
 											AssetName = assetName,
 											FileName = fileName,
 										});
+									}
+								}
+								else if (tmp.Length == 5)
+								{
+									// FGO cfb1d36393fd67385e046b084b7cf7ed
+									assetName = assetName = tmp[4].Replace('/', '@');
+									fileName = assetName;
+									Asset asset = new() { AssetName = assetName, FileName = fileName };
+
+									if (tmp[4].Contains("Audio"))
+									{
+										asset.FileName = CatAndMouseGame.GetMD5String(asset.FileName);
+										AudioList.Add(asset);
+									}
+									else if (tmp[4].Contains("Movie"))
+									{
+										asset.FileName = CatAndMouseGame.GetMD5String(asset.FileName);
+										MovieList.Add(asset);
+									}
+									else
+									{
+										asset.FileName = CatAndMouseGame.GetShaName(asset.FileName + ".unity3d");
+										AssetList.Add(asset);
 									}
 								}
 								else if (tmp.Length == 7)
