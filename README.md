@@ -2,6 +2,13 @@
 
 这是一个`zygisk`模块，闭源，使用前考虑风险。
 
+## 更新
+- 添加中文字体，下载`Font`后扔在`Mod`文件夹内
+- 添加从者说明，下载`mstSvtComment.yaml`后扔在`Mod`文件夹内
+- 有小概率卡死在登录界面
+
+![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
+
 ## 功能
 
 - 替换Master头像、立绘
