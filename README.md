@@ -4,8 +4,16 @@
 
 ## 更新
 - 添加中文字体，下载`Font`后扔在`Mod`文件夹内
+
 - 添加从者说明，下载`mstSvtComment.yaml`后扔在`Mod`文件夹内
-- 有小概率卡死在登录界面
+
+- 有**小**概率卡死在首次`LOADING`界面，表现为芙芙一直在跑
+
+  有**较大**概率卡死在登录后的白屏，从白屏下方有没有出现黑条可以判断出。
+
+  解决方案是删掉`Font`
+
+  或者用`v0.1`
 
 ![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
 
@@ -26,7 +34,7 @@
 
 ![3.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/3.jpg?raw=true)
 
-缺少简体字所以看起来有点奇怪
+~~缺少简体字所以看起来有点奇怪~~`v0.2`版本添加中文字体
 
 ![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/4.jpg?raw=true)
 
