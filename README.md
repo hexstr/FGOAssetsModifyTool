@@ -2,6 +2,12 @@
 
 这是一个`zygisk`模块，闭源，使用前考虑风险。
 
+模块只支持`64位`，对应游戏文件夹`/data/app/包名/lib/arm64`，如果只有`arm`目录，使用`adb`覆盖安装
+
+```shell
+adb install -r --abi arm64-v8a FateGO.apk
+```
+
 ## 更新
 - 添加中文字体，下载`Font`后扔在`Mod`文件夹内
 
@@ -88,5 +94,14 @@
 |---0805.script
 |---42.chara
 |---LocalizationJpn.txt
+```
+
+## 抓日志
+
+终端模拟器输入
+
+```shell
+su
+logcat -s hexstr:V
 ```
 
