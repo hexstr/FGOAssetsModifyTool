@@ -78,6 +78,8 @@ adb install -r --abi arm64-v8a FateGO.apk
 
 窄边框的立绘同上，不过放置在`/sdcard/Android/data/包名/files/Mod/Figure/NarrowFigure/`文件夹下。
 
+`id`可以从`mstSvt.json`中获取
+
 完整的文件树示例：
 
 ```shell
