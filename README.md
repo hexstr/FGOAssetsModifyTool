@@ -47,13 +47,7 @@ adb install -r --abi arm64-v8a FateGO.apk
 ## 使用
 模块的工作目录是`/sdcard/Android/data/包名/files/Mod/`，比如`/sdcard/Android/data/com.bilibili.fatego/files/Mod`或者`/storage/emulated/0/Android/data/com.aniplex.fategrandorder/files/Mod`
 
-在`Release`中有预制的几个文件，其中：
-- 为日服推荐下载的`LocalizationJpn.txt`
-- 为日服推荐下载的`xxxx.script`
-- 为国服推荐下载的`xx.chara`
-- 可选的`Master.chara`和`Custom.chara`
-
-直接下载打包好的`*.chara`文件，放入工作目录下即可。
+在`Release`中有预制的几个文件，直接下载后放入工作目录下即可。
 
 或者自己做，比较麻烦，需要自己`ps`处理图片，可以下载`psd`自己改。
 
