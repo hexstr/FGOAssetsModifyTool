@@ -49,8 +49,8 @@ adb install -r --abi arm64-v8a FateGO.apk
 
 在`Release`中有预制的几个文件，其中：
 - 为日服推荐下载的`LocalizationJpn.txt`
-- 为日服推荐下载的`0805.script`
-- 为国服推荐下载的`42.chara`
+- 为日服推荐下载的`xxxx.script`
+- 为国服推荐下载的`xx.chara`
 - 可选的`Master.chara`和`Custom.chara`
 
 直接下载打包好的`*.chara`文件，放入工作目录下即可。
