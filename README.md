@@ -2,33 +2,13 @@
 
 这是一个`zygisk`模块，闭源，使用前考虑风险。
 
-模块只支持`64位`，对应游戏文件夹`/data/app/包名/lib/arm64`，如果只有`arm`目录，使用`adb`覆盖安装
-
-```shell
-adb install -r --abi arm64-v8a FateGO.apk
-```
-
-## 更新
-- 添加中文字体，下载`Font`后扔在`Mod`文件夹内
-
-- 添加从者说明，下载`mstSvtComment.yaml`后扔在`Mod`文件夹内
-
-- 尝试在`0.2.3`修复以下问题：
-
-  有**小**概率卡死在首次`LOADING`界面，表现为芙芙一直在跑
-
-  有**较大**概率卡死在登录后的白屏，从白屏下方有没有出现黑条可以判断出。
-
-  
-
-![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
-
 ## 功能
 
 - 替换Master头像、立绘
 - 替换从者立绘
 - 替换UI文本
 - 替换剧情文本
+- 替换从者说明文本
 
 ## 预览
 ![1.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/1.jpg?raw=true)
@@ -40,7 +20,7 @@ adb install -r --abi arm64-v8a FateGO.apk
 
 ![3.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/3.jpg?raw=true)
 
-~~缺少简体字所以看起来有点奇怪~~`v0.2`版本添加中文字体
+缺少简体字所以看起来有点奇怪
 
 ![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/4.jpg?raw=true)
 
@@ -51,7 +31,7 @@ adb install -r --abi arm64-v8a FateGO.apk
 
 或者自己做，比较麻烦，需要自己`ps`处理图片，可以下载`psd`自己改。
 
-创建`/sdcard/Android/data/包名/files/Mod/Figure/`文件夹，写一个`Figure.yaml`放在里面，内容如下：
+写一个`Figure.yaml`放在`Mod`文件夹，内容如下：
 
 ```yaml
 - name: abi
@@ -77,8 +57,8 @@ adb install -r --abi arm64-v8a FateGO.apk
 完整的文件树示例：
 
 ```shell
+|---Figure.yaml
 |---Figure
-| |---Figure.yaml
 | |---CharaGraph
 | | |---2500100.png
 | | |---603700.png
@@ -101,3 +81,4 @@ su
 logcat -s hexstr:V
 ```
 
+或者下载[这个](https://f-droid.org/repo/com.dp.logcatapp_33.apk)，打开后搜索`hexstr`
