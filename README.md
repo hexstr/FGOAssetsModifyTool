@@ -13,13 +13,13 @@ adb install -r --abi arm64-v8a FateGO.apk
 
 - 添加从者说明，下载`mstSvtComment.yaml`后扔在`Mod`文件夹内
 
-- 有**小**概率卡死在首次`LOADING`界面，表现为芙芙一直在跑
+- 尝试在`0.2.3`修复以下问题：
+
+  有**小**概率卡死在首次`LOADING`界面，表现为芙芙一直在跑
 
   有**较大**概率卡死在登录后的白屏，从白屏下方有没有出现黑条可以判断出。
 
-  解决方案是删掉`Font`
-
-  或者用`v0.1`
+  
 
 ![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
 
