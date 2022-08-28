@@ -8,6 +8,7 @@
 - 替换从者立绘
 - 替换UI文本
 - 替换剧情文本
+- 替换从者名称
 - 替换从者说明文本
 
 ## 预览
@@ -19,8 +20,6 @@
 
 
 ![3.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/3.jpg?raw=true)
-
-缺少简体字所以看起来有点奇怪
 
 ![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/4.jpg?raw=true)
 
