@@ -45,9 +45,9 @@
 
 `name`是助记项可忽略，`id`为`从者id`，`enable`为`true`时启用。
 
-然后创建`/sdcard/Android/data/包名/files/Mod/Figure/CharaGraph/`文件夹，放置详情页面立绘，按从者`id.png`方式命名，比如
+然后创建`/sdcard/Android/data/包名/files/Mod/Figure/CharaGraph/`文件夹，放置详情页面立绘，按从者`id[a|b].png`方式命名，比如
 
-`/sdcard/Android/data/包名/files/Mod/Figure/CharaGraph/603700.png`
+`/sdcard/Android/data/包名/files/Mod/Figure/CharaGraph/603700a.png`
 
 窄边框的立绘同上，不过放置在`/sdcard/Android/data/包名/files/Mod/Figure/NarrowFigure/`文件夹下。
 
@@ -59,8 +59,8 @@
 |---Figure.yaml
 |---Figure
 | |---CharaGraph
-| | |---2500100.png
-| | |---603700.png
+| | |---2500100a.png
+| | |---603700a.png
 | |---NarrowFigure
 | | |---2500100.png
 | | |---603700.png
