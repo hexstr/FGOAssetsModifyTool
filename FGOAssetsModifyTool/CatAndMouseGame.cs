@@ -289,18 +289,9 @@ namespace FGOAssetsModifyTool
 			byte[] result = null;
 			try
 			{
-				var blockCipher = new CbcBlockCipher(new RijndaelEngine(256));
-				var cipher = new PaddedBufferedBlockCipher(blockCipher, new Pkcs7Padding());
-				var keyParam = new KeyParameter(home);
-				var keyParamWithIV = new ParametersWithIV(keyParam, info, 0, 32);
-				cipher.Init(true, keyParamWithIV);
-				var buffer = new byte[cipher.GetOutputSize(data.Length)];
-				var length = cipher.ProcessBytes(data, buffer, 0);
-				cipher.DoFinal(buffer, length);
-
 				if (isCompress)
 				{
-					using (MemoryStream inStream = new MemoryStream(buffer))
+					using (MemoryStream inStream = new MemoryStream(data))
 					{
 						using (MemoryStream outStream = new MemoryStream())
 						{
@@ -316,10 +307,15 @@ namespace FGOAssetsModifyTool
 						}
 					}
 				}
-				else
-				{
-					return buffer;
-				}
+				var blockCipher = new CbcBlockCipher(new RijndaelEngine(256));
+				var cipher = new PaddedBufferedBlockCipher(blockCipher, new Pkcs7Padding());
+				var keyParam = new KeyParameter(home);
+				var keyParamWithIV = new ParametersWithIV(keyParam, info, 0, 32);
+				cipher.Init(true, keyParamWithIV);
+				var buffer = new byte[cipher.GetOutputSize(result.Length)];
+				var length = cipher.ProcessBytes(result, buffer, 0);
+				cipher.DoFinal(buffer, length);
+				result = buffer;
 			}
 			catch (Exception ex)
 			{
