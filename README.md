@@ -11,6 +11,7 @@
 - fategrandorder
 - fatego
 - bilibili.fgo
+- com.tencent.tmgp.fgo
 
 ## 功能
 
@@ -45,7 +46,7 @@
 
 ```shell
 su
-logcat -s hexstr:V
+logcat --pid `pgrep fate`
 ```
 
 或者下载[这个](https://f-droid.org/repo/com.dp.logcatapp_33.apk)，打开后搜索`hexstr`
