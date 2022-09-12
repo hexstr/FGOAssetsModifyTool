@@ -13,10 +13,13 @@
 
 `NarrowFigure`对应编队时的窄边框立绘
 
+`Status`对应战斗时的半身像
+
 ## 尺寸
 
 - `NarrowFigure`：宽 x 高 = 149 x 376
 - `CharaGraph`：宽 x 高 = 512 x 725
+- `Status`：宽 x 高 = 256 x 256
 - `Master头像`：256 x 256
 
 ## 制作
@@ -25,13 +28,15 @@
 
 因为一二破和三四破分别在两个文件中，所以你需要制作两个`png`文件。
 
-`Master头像`裁剪对应的尺寸，重命名为`master.png`
+`Master头像`裁剪对应的尺寸，重命名为`master.png`。
 
-`Master服装立绘`：在`psd`里自己看着位置叠加就行，可能要多次调整位置。导出的文件可以参考`Gudako_cover.png`和`Gudako_shadow.png`
+`Status`自己看着办，要三张，参考`Status_603700_[1|2|3].png`。
+
+`Master服装立绘`：在`psd`里自己看着位置叠加就行，可能要多次调整位置。导出的文件可以参考`Gudako_cover.png`和`Gudako_shadow.png`。
 
 ## 导入
 
-制作完成后，创建`Mod/Figure`、`Mod/Figure/NarrowFigure`和`Mod/Figure/CharaGraph`文件夹，把`master.png`、`Gudako_cover.png`和`Gudako_shadow.png`直接放到`Mod/Figure`文件夹就行。
+制作完成后，创建`Mod/Figure`、`Mod/Figure/Status`、`Mod/Figure/NarrowFigure`和`Mod/Figure/CharaGraph`文件夹，把`master.png`、`Gudako_cover.png`和`Gudako_shadow.png`直接放到`Mod/Figure`文件夹就行。
 
 从者立绘需要特别处理，首先写一个`Figure.yaml`，内容如下：
 
@@ -52,10 +57,15 @@
 
 把导出的`NarrowFigure_603700.png`重命名为`从者id.png`，也就是`603700.png`。
 
+把三张`Status`重命名为`从者id_[1|2|3].png`，也就是`603700_1.png`、`603700_2.png`和`603700_3.png`。
+
+
+
 最后
 
 - `Figure.yaml`放在`Mod`文件夹
 - 把`603700a.png`和`603700b.png`放在`Mod/Figure/CharaGraph`文件夹
+- 把`603700_1.png`、`603700_2.png`和`603700_3.png`放在`Mod/Figure/Status`文件夹
 - 把`603700.png`放在`Mod/Figure/NarrowFigure`即可。
 
 完整的文件树示例：
@@ -74,5 +84,10 @@
 |
 | |---NarrowFigure(文件夹)
 | | |---603700.png(文件)
+| |
+| |---Status(文件夹)
+| | |---603700_1.png(文件)
+| | |---603700_2.png(文件)
+| | |---603700_3.png(文件)
 ```
 
