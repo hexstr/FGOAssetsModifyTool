@@ -62,10 +62,11 @@ https://github.com/hexstr/FGOAssetsModifyTool/releases/tag/AssetDownload
 - 为日服推荐下载的`LocalizationJpn.txt`，对应`替换UI文本`
 - 为日服推荐下载的`Font`，对应`替换中文字体`
 - 为日服推荐下载的`数字.script`，对应`替换剧情文本`
+- 为日服推荐下载的`mstSvt.yaml`和`mstSvtComment.yaml`，对应`替换从者名称和详情`
+- 为日服推荐下载的`mstSkillName.yaml`和`mstSkillDetail.yaml`，对应`替换技能名称和详情`
+- 为日服推荐下载的`mstTreasureDeviceName.yaml`和`mstTreasureDeviceDetail.yaml`，对应`替换宝具名称和详情`
 - 为国服推荐下载的`数字.chara`，对应`替换从者立绘`
 - 可选的`Master.chara`，对应`替换Master头像、立绘`
-- 可选的`mstSvt.yaml`，对应`替换从者名称`
-- 可选的`mstSvtComment.yaml`，对应`替换从者说明文本`
 
 ## 其它
 
