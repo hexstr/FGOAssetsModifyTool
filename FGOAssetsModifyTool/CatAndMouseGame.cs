@@ -339,6 +339,13 @@ namespace FGOAssetsModifyTool
 				var length = cipher.ProcessBytes(data, buffer, 0);
 				cipher.DoFinal(buffer, length);
 
+				if (buffer.Length != length)
+				{
+					var tmp = new byte[length];
+					Array.Copy(buffer, 0, tmp, 0, length);
+					buffer = tmp;
+				}
+
 				if (isCompress)
 				{
 					using (MemoryStream inStream = new(buffer))

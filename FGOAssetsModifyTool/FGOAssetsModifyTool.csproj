@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.NetCore" Version="1.9.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="SharpZipLib" Version="1.3.3" />
+    <PackageReference Include="SharpZipLib" Version="1.4.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="bgo_1.55.3_CatAndMouseGame.cs" />
