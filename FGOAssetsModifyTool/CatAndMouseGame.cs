@@ -286,14 +286,14 @@ namespace FGOAssetsModifyTool
 
 		public byte[] CatHomeMain(byte[] data, byte[] home, byte[] info, bool isCompress = false)
 		{
-			byte[] result = null;
+			byte[] result = data;
 			try
 			{
 				if (isCompress)
 				{
-					using (MemoryStream inStream = new MemoryStream(data))
+					using (MemoryStream inStream = new(data))
 					{
-						using (MemoryStream outStream = new MemoryStream())
+						using (MemoryStream outStream = new())
 						{
 							if (fileType == FileType.CN)
 							{
@@ -312,9 +312,7 @@ namespace FGOAssetsModifyTool
 				var keyParam = new KeyParameter(home);
 				var keyParamWithIV = new ParametersWithIV(keyParam, info, 0, 32);
 				cipher.Init(true, keyParamWithIV);
-				var buffer = new byte[cipher.GetOutputSize(result.Length)];
-				var length = cipher.ProcessBytes(result, buffer, 0);
-				cipher.DoFinal(buffer, length);
+				var buffer = cipher.DoFinal(result);
 				result = buffer;
 			}
 			catch (Exception ex)
@@ -335,16 +333,7 @@ namespace FGOAssetsModifyTool
 				var keyParam = new KeyParameter(home);
 				var keyParamWithIV = new ParametersWithIV(keyParam, info, 0, 32);
 				cipher.Init(false, keyParamWithIV);
-				var buffer = new byte[cipher.GetOutputSize(data.Length)];
-				var length = cipher.ProcessBytes(data, buffer, 0);
-				cipher.DoFinal(buffer, length);
-
-				if (buffer.Length != length)
-				{
-					var tmp = new byte[length];
-					Array.Copy(buffer, 0, tmp, 0, length);
-					buffer = tmp;
-				}
+				var buffer = cipher.DoFinal(data);
 
 				if (isCompress)
 				{

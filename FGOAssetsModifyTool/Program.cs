@@ -22,9 +22,10 @@ namespace FGOAssetsModifyTool
 			try
 			{
 				Console.WriteLine(
-					"初始化顺序：3->7->4->6->0\n" +
-					"之后直接选择：0\n" +
-					"注意：日服的AssetStorage.txt必须选择4下载，从游戏中提取的格式不同\n" +
+					"注意：日服第一次使用之前需要初始化，初始化顺序：3->7->4->6->0\n" +
+					"之后运行直接选择：0\n" +
+					"当然，如果有新的资源，也需要重新初始化一遍。\n" +
+					"日服的AssetStorage.txt必须选择4下载，从游戏中提取的格式不同。\n" +
 					"0: 载入assetbundleinfo\n" +
 					"1: 加密\t" +
 					"2: 解密\n" +
@@ -473,7 +474,7 @@ namespace FGOAssetsModifyTool
 
 								if (ScriptReplaceRules.Count != 0)
 								{
-									foreach(var rule in ScriptReplaceRules)
+									foreach (var rule in ScriptReplaceRules)
 									{
 										OutputTxt = OutputTxt.Replace(rule.Key, rule.Value);
 									}
