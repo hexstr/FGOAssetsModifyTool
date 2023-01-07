@@ -22,6 +22,7 @@
 - 替换从者名称和详情
 - 替换技能名称和详情
 - 替换宝具名称和详情
+- 替换从者召唤台词
 
 ## 其它文档
 
@@ -40,6 +41,10 @@
 ![3.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/3.jpg?raw=true)
 
 ![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/4.jpg?raw=true)
+
+![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
+
+![6.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/6.jpg?raw=true)
 
 ## 抓日志
 
