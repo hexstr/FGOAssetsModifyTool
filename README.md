@@ -31,6 +31,8 @@
 
 ## 预览
 
+彩蛋，为艾蕾替换主线中出现过的立绘，只需要把灵基设置为初始状态即可
+
 ![1.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/1.jpg?raw=true)
 
 因为使用了日服提取的资源，所以左下角是日文
