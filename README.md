@@ -1,5 +1,8 @@
 # FGOAssetReplace
 
+酷安现在发言需要绑定中国大陆手机号了，以我的习惯是绝对不会绑定的，所以发在这里了:  
+**年更模块[ModFGO](https://github.com/hexstr/ModFGO)更新了**
+
 ## 简介
 
 这是一个`zygisk`模块，闭源，使用前考虑风险。
