@@ -31,10 +31,12 @@
 
 - [安装指南](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/docs/InstallationGuide.md)
 - [如何自定义立绘](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/docs/HowToCustomizeFigure.md)
+- [如何一键提取立绘和文本](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/docs/HowToExtractAssets.md)
 
 ## 预览
 
-彩蛋，为艾蕾替换主线中出现过的立绘，只需要把灵基设置为初始状态即可
+~~彩蛋，为艾蕾替换主线中出现过的立绘，只需要把灵基设置为初始状态即可~~  
+这个彩蛋已经移除
 
 ![1.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/1.jpg?raw=true)
 
@@ -61,3 +63,5 @@ logcat --pid `pgrep fate`
 ```
 
 或者下载[这个](https://f-droid.org/repo/com.dp.logcatapp_33.apk)，打开后搜索`hexstr`
+
+如果日志不全的话，参考[这个](https://github.com/hexstr/FGOAssetsModifyTool/issues/106#issuecomment-1664838421)

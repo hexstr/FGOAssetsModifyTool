@@ -27,3 +27,12 @@
 只实现了`提取图片`和`文本`的功能，遇到剧情文件会自动提取解密后的文件。
 
 因为是半成品，所以如果遇到任何bug可以**不用**告诉我。
+
+## 其它
+因为从`BGO`提取的文本是被和谐过，所以可以在仓库[FGOAssets](https://github.com/hexstr/FGOAssets)下载`ScriptReplaceRules.json`后，重命名为`ReplaceRules.json`放到`存放路径`中，默认是`X:\FGOAssetToolBox\data\ReplaceRules.json`
+
+## 新增
+可以导出模块需要的文件了，首先需要解析国服和日服的`MasterData`，然后点击`Conversion`标签，直接`导出`即可。  
+当然，导出的文件是`.json`，你可以在[这个网站](https://codebeautify.org/json-to-yaml)完成转换
+
+![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/docs/imgs/4.jpg?raw=true)
