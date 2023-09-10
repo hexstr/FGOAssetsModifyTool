@@ -39,7 +39,7 @@ adb install -r --abi arm64-v8a FateGO.apk
 
 ### 下载地址
 
-https://github.com/chaldea-center/chaldea-data/tree/main/mappings
+https://github.com/hexstr/FGOAssetsModifyTool/releases/tag/AssetDownload
 
 ### 导入
 
