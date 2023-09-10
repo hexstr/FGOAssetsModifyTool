@@ -23,10 +23,21 @@
 - 替换从者立绘
 - 替换UI文本
 - 替换剧情文本
-- 替换从者名称和详情
-- 替换技能名称和详情
-- 替换宝具名称和详情
-- 替换从者召唤台词
+- `从者名称`汉化
+- `指令纹章名称`汉化
+- `从者灵衣名称`汉化
+- `Master服装名称`汉化
+- `从者宝具名称`汉化
+- `从者宝具描述`汉化
+- `技能名称`汉化
+- `技能描述`汉化
+- `商店物品名称`汉化
+- `任务名称`汉化（例如幕间物语中的任务）
+- `战斗关卡名称`汉化（例如`大神殿`）
+- `战斗地点名称`汉化（例如`太阳王的居城`）
+- `物品名称`汉化（例如`圣晶石`）
+- `Event名称`汉化（例如`活动加成从者友情点获得量2倍`，我也不知道显示在哪里）
+- 感谢[chaldea-data](https://github.com/chaldea-center/chaldea-data/tree/main/mappings)提供的文本翻译（非自愿）
 
 ## 其它文档
 
@@ -45,14 +56,11 @@
 
 ![2.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/2.jpg?raw=true)
 
-
 ![3.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/3.jpg?raw=true)
 
 ![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/4.jpg?raw=true)
 
 ![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
-
-![6.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/6.jpg?raw=true)
 
 ## 抓日志
 
