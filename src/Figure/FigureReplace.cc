@@ -10,41 +10,17 @@
 #include <bundle/bundle_consumer.hh>
 #include <il2cpp_api.hh>
 #include <il2cpp_dummy_class.hh>
-#include <string_utils.hh>
 
 #include "utility/configuration.hh"
 #include "utility/logger.hh"
 
 namespace fs = std::filesystem;
 using namespace std;
-using namespace Il2CppApi::StringUtils;
 
 struct Figure {
     std::string id_;
     bool enable_;
 };
-
-namespace YAML {
-    template <>
-    struct convert<Figure> {
-        static Node encode(const Figure& rhs) {
-            Node node;
-            node["id"] = rhs.id_;
-            node["enable"] = rhs.enable_;
-            return node;
-        }
-
-        static bool decode(const Node& node, Figure& rhs) {
-            if (const auto& itor = node["id"]; itor.IsScalar()) {
-                rhs.id_ = itor.as<std::string>();
-            }
-            if (const auto& itor = node["enable"]; itor.IsScalar()) {
-                rhs.enable_ = itor.as<bool>();
-            }
-            return true;
-        }
-    };
-} // namespace YAML
 
 using LoadImage_f = bool (*)(void*, MyArray<unsigned char>*, bool);
 static LoadImage_f ImageConversion_LoadImage = nullptr;
@@ -66,6 +42,9 @@ void* new_UINarrowFigureRender_GetBodyTexture(void* _, void* assetData) {
     auto& dummy_asset_data = DummyClassBuilder::GetInstance().GetDummyClass(assetData);
     auto asset_name = dummy_asset_data.GetString("name");
     string_view sv(&asset_name[13], asset_name.size() - 13);
+
+    LOGD("[%s] asset name: %.*s", __FUNCTION__, (int)sv.size(), sv.data());
+
     void* res = ori_UINarrowFigureRender_GetBodyTexture(_, assetData);
     if (auto itor = FigureCache.find(sv.data()); itor != FigureCache.end()) {
         auto& dummy_ui_narrow_figure_render = DummyClassBuilder::GetInstance().GetDummyClass(_);
@@ -76,6 +55,9 @@ void* new_UINarrowFigureRender_GetBodyTexture(void* _, void* assetData) {
         else {
             LoadImage(res, itor->second->narrow_.a_, false);
         }
+    }
+    else {
+        LOGD("[%s] %.*s not found", __FUNCTION__, (int)sv.size(), sv.data());
     }
     return res;
 }
@@ -106,6 +88,8 @@ void* new_UICharaGraphRender_GetBodyTexture(void* _, void* assetData) {
 
     string_view sv(&asset_name[11]);
 
+    LOGD("[%s] asset name: %.*s", __FUNCTION__, (int)sv.size(), sv.data());
+
     if (auto itor = FigureCache.find(sv.data()); itor != FigureCache.end()) {
         if (suffix == 'a') {
             LoadImage(res, itor->second->chara_.a_, false);
@@ -113,6 +97,9 @@ void* new_UICharaGraphRender_GetBodyTexture(void* _, void* assetData) {
         else if (suffix == 'b') {
             LoadImage(res, itor->second->chara_.b_, false);
         }
+    }
+    else {
+        LOGD("[%s] %.*s not found: %d %c", __FUNCTION__, (int)sv.size(), sv.data(), image_limit_count, suffix);
     }
     return res;
 }
@@ -236,48 +223,55 @@ void FigureReplace::Start() {
         }
     }
 
-    try {
-        YAML::Node node = YAML::LoadFile(Config::ModConfigPath + "Figure.yaml");
-        if (node.IsNull() == false) {
-            std::vector<Figure> figure = node.as<std::vector<Figure>>();
-            for (auto& item : figure) {
-                if (item.enable_) {
-                    std::string& id = item.id_;
-                    std::string narrow_path_a = absl::StrFormat("%sFigure/NarrowFigure/%s.png", Config::ModConfigPath, id);
-                    std::string narrow_path_b = absl::StrFormat("%sFigure/NarrowFigure/%s_2.png", Config::ModConfigPath, id);
-                    auto Narrow_a = MyArray<unsigned char>::NewMyArrayFromFile(narrow_path_a.c_str());
-                    auto Narrow_b = MyArray<unsigned char>::NewMyArrayFromFile(narrow_path_b.c_str());
-                    std::string chara_path_a = absl::StrFormat("%sFigure/CharaGraph/%sa.png", Config::ModConfigPath, id);
-                    std::string chara_path_b = absl::StrFormat("%sFigure/CharaGraph/%sb.png", Config::ModConfigPath, id);
-                    auto Chara_a = MyArray<unsigned char>::NewMyArrayFromFile(chara_path_a.c_str());
-                    auto Chara_b = MyArray<unsigned char>::NewMyArrayFromFile(chara_path_b.c_str());
+    auto doc = Utility::LoadJsonFromFile((Config::ModConfigPath + "Figure.json").c_str());
+    if (doc.ok() && doc->IsArray()) {
+        for (auto& item : doc->GetArray()) {
+            if (auto itor = item.FindMember("id"); itor != item.MemberEnd() && itor->value.IsString()) {
+                auto id = itor->value.GetString();
+                if (auto itor2 = item.FindMember("enable"); itor2 != item.MemberEnd() && itor2->value.IsBool()) {
+                    if (itor2->value.GetBool()) {
+                        std::string narrow_path_a = absl::StrFormat("%sFigure/NarrowFigure/%s.png", Config::ModConfigPath, id);
+                        std::string narrow_path_b = absl::StrFormat("%sFigure/NarrowFigure/%s_2.png", Config::ModConfigPath, id);
+                        auto Narrow_a = MyArray<unsigned char>::NewMyArrayFromFile(narrow_path_a.c_str());
+                        auto Narrow_b = MyArray<unsigned char>::NewMyArrayFromFile(narrow_path_b.c_str());
+                        std::string chara_path_a = absl::StrFormat("%sFigure/CharaGraph/%sa.png", Config::ModConfigPath, id);
+                        std::string chara_path_b = absl::StrFormat("%sFigure/CharaGraph/%sb.png", Config::ModConfigPath, id);
+                        auto Chara_a = MyArray<unsigned char>::NewMyArrayFromFile(chara_path_a.c_str());
+                        auto Chara_b = MyArray<unsigned char>::NewMyArrayFromFile(chara_path_b.c_str());
 
-                    std::string status_path_a = absl::StrFormat("%sFigure/Status/%s_1.png", Config::ModConfigPath, id);
-                    std::string status_path_b = absl::StrFormat("%sFigure/Status/%s_2.png", Config::ModConfigPath, id);
-                    std::string status_path_c = absl::StrFormat("%sFigure/Status/%s_3.png", Config::ModConfigPath, id);
-                    auto Status_a = MyArray<unsigned char>::NewMyArrayFromFile(status_path_a.c_str());
-                    auto Status_b = MyArray<unsigned char>::NewMyArrayFromFile(status_path_b.c_str());
-                    auto Status_c = MyArray<unsigned char>::NewMyArrayFromFile(status_path_c.c_str());
+                        std::string status_path_a = absl::StrFormat("%sFigure/Status/%s_1.png", Config::ModConfigPath, id);
+                        std::string status_path_b = absl::StrFormat("%sFigure/Status/%s_2.png", Config::ModConfigPath, id);
+                        std::string status_path_c = absl::StrFormat("%sFigure/Status/%s_3.png", Config::ModConfigPath, id);
+                        auto Status_a = MyArray<unsigned char>::NewMyArrayFromFile(status_path_a.c_str());
+                        auto Status_b = MyArray<unsigned char>::NewMyArrayFromFile(status_path_b.c_str());
+                        auto Status_c = MyArray<unsigned char>::NewMyArrayFromFile(status_path_c.c_str());
 
-                    if (Narrow_a || Narrow_b || Chara_a || Chara_b || Status_a || Status_b || Status_c) {
-                        auto figure_data = new FigureData(Narrow_a, Narrow_b, Chara_a, Chara_b);
-                        figure_data->status_.a_ = Status_a;
-                        figure_data->status_.b_ = Status_b;
-                        figure_data->status_.c_ = Status_c;
-                        FigureCache[id] = figure_data;
-                        LOGD("[FigureReplace] %s loaded.", id.c_str());
+                        if (Narrow_a || Narrow_b || Chara_a || Chara_b || Status_a || Status_b || Status_c) {
+                            auto figure_data = new FigureData(Narrow_a, Narrow_b, Chara_a, Chara_b);
+                            figure_data->status_.a_ = Status_a;
+                            figure_data->status_.b_ = Status_b;
+                            figure_data->status_.c_ = Status_c;
+                            FigureCache[id] = figure_data;
+                            LOGD("[FigureReplace] %s loaded.", id);
+                        }
+                        else {
+                            LOGD("[FigureReplace] Failed to load %s.", id);
+                        }
                     }
                     else {
-                        LOGD("[FigureReplace] Failed to load %s.", id.c_str());
+                        LOGD("[FigureReplace] not enable.");
                     }
                 }
+                else {
+                    LOGD("[FigureReplace] enable not found.");
+                }
+            }
+            else {
+                LOGD("[FigureReplace] id not found.");
             }
         }
     }
 
-    catch (std::exception& ex) {
-        ERROR("[YAML] %s", ex.what());
-    }
     {
         auto path = absl::StrFormat("%sFigure/master.png", Config::ModConfigPath);
         auto MasterFace = MyArray<unsigned char>::NewMyArrayFromFile(path.c_str());
