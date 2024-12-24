@@ -20,7 +20,8 @@
 ## 功能
 
 - 替换Master头像、立绘
-- 替换从者立绘
+- 替换从者立绘（完全版）
+- 替换从者模型贴图
 - 替换UI文本
 - 替换剧情文本
 - `从者名称`汉化
@@ -47,9 +48,6 @@
 
 ## 预览
 
-~~彩蛋，为艾蕾替换主线中出现过的立绘，只需要把灵基设置为初始状态即可~~  
-这个彩蛋已经移除
-
 ![1.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/1.jpg?raw=true)
 
 因为使用了日服提取的资源，所以左下角是日文
@@ -61,6 +59,8 @@
 ![4.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/4.jpg?raw=true)
 
 ![5.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/5.jpg?raw=true)
+
+![6.jpg](https://github.com/hexstr/FGOAssetsModifyTool/blob/module/imgs/6.jpg?raw=true)
 
 ## 抓日志
 
@@ -74,3 +74,5 @@ logcat --pid `pgrep fate`
 或者下载[这个](https://f-droid.org/repo/com.dp.logcatapp_33.apk)，打开后搜索`hexstr`
 
 如果日志不全的话，参考[这个](https://github.com/hexstr/FGOAssetsModifyTool/issues/106#issuecomment-1664838421)
+
+新增：在Mod文件夹下创建文件`debug.log`和`error.log`，会保存模块产生的日志
