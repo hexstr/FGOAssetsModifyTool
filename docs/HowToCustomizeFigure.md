@@ -5,7 +5,9 @@
 - PhotoShop
 - CharaGraph_603700.psd
 - NarrowFigure_603700.psd
+- CharaFigure_3032002.psd
 - Gudako.psd
+- 303200.png
 
 ## 说明
 
@@ -13,14 +15,20 @@
 
 `NarrowFigure`对应编队时的窄边框立绘
 
+`CharaFigure`对应剧情和主页立绘
+
 `Status`对应战斗时的半身像
+
+`Servants`对应从者模型贴图
 
 ## 尺寸
 
 - `NarrowFigure`：宽 x 高 = 149 x 376
 - `CharaGraph`：宽 x 高 = 512 x 725
+- `CharaFigure`：最大宽高 1024 x 1024，需要自己调整
 - `Status`：宽 x 高 = 256 x 256
 - `Master头像`：256 x 256
+- `Servants`：需要提取原始贴图然后修改
 
 ## 制作
 
@@ -34,24 +42,13 @@
 
 `Master服装立绘`：在`psd`里自己看着位置叠加就行，可能要多次调整位置。导出的文件可以参考`Gudako_cover.png`和`Gudako_shadow.png`。
 
+`CharaFigure`需要原始图片和黑色剪影两张图片，文件可以参考`3032002.png`和`3032002a.png`
+
+`Servants`需要提取原始贴图然后修改，文件可以参考`303200.png`
+
 ## 导入
 
-制作完成后，创建`Mod/Figure`、`Mod/Figure/Status`、`Mod/Figure/NarrowFigure`和`Mod/Figure/CharaGraph`文件夹，把`master.png`、`Gudako_cover.png`和`Gudako_shadow.png`直接放到`Mod/Figure`文件夹就行。
-
-从者立绘需要特别处理，首先写一个`Figure.yaml`，内容如下：
-
-```yaml
-- name: abi
-  enable: true
-  id: "2500100"
-- enable: true
-  id: "2500200"
-- name: kama
-  enable: true
-  id: "603700"
-```
-
-`name`是助记项可忽略，`id`为`从者id`，`enable`为`true`时启用。`从者id`可以在`mstSvt.json`找到。
+制作完成后，创建`Mod/Figure`、`Mod/Figure/Status`、`Mod/Figure/NarrowFigure`、`Mod/Figure/CharaGraph`和`Mod/Figure/CharaFigure`文件夹，把`master.png`、`Gudako_cover.png`和`Gudako_shadow.png`直接放到`Mod/Figure`文件夹就行。
 
 把导出的两张`CharaGraph_603700.png`按从者`id[a|b].png`方式命名，也就是`603700a.png`和`603700b.png`。
 
@@ -61,28 +58,34 @@
 
 最后
 
-- `Figure.yaml`放在`Mod`文件夹
 - 把`603700a.png`和`603700b.png`放在`Mod/Figure/CharaGraph`文件夹
 - 把`603700_1.png`、`603700_2.png`和`603700_3.png`放在`Mod/Figure/Status`文件夹
-- 把`603700.png`放在`Mod/Figure/NarrowFigure`即可。
+- 把`603700.png`放在`Mod/Figure/NarrowFigure`文件夹
+- 把`3032002.png`和`3032002a.png`放在`Mod/Figure/CharaFigure`文件夹
+- 把`303200.png`放在`Mod/Figure/Servants`文件夹即可。
 
 完整的文件树示例：
 
 ```shell
-|---Figure.yaml(文件)
-|
 |---Figure(文件夹)
 | |---Gudako_cover.png(文件)
 | |---Gudako_shadow.png(文件)
 | |---master.png(文件)
 |
 | |---CharaGraph(文件夹)
+| | |---3032002.png(文件)
+| | |---3032002a.png(文件)
+|
+| |---CharaFigure(文件夹)
 | | |---603700a.png(文件)
 | | |---603700b.png(文件)
 |
 | |---NarrowFigure(文件夹)
 | | |---603700.png(文件)
-| |
+|
+| |---Servants(文件夹)
+| | |---303200.png(文件)
+|
 | |---Status(文件夹)
 | | |---603700_1.png(文件)
 | | |---603700_2.png(文件)
