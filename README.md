@@ -1,8 +1,5 @@
 # FGOAssetReplace
 
-酷安现在发言需要绑定中国大陆手机号了，以我的习惯是绝对不会绑定的，所以发在这里了:  
-**年更模块[ModFGO](https://github.com/hexstr/ModFGO)更新了**
-
 ## 简介
 
 这是一个`zygisk`模块，~~闭源~~核心部分已开源，使用前考虑风险。  
@@ -19,10 +16,10 @@
 
 ## 功能
 
-- 替换Master头像、立绘
+- 替换 Master 头像、立绘
 - 替换从者立绘（完全版）
 - 替换从者模型贴图
-- 替换UI文本
+- 替换 UI 文本
 - 替换剧情文本
 - `从者名称`汉化
 - `指令纹章名称`汉化
@@ -75,4 +72,4 @@ logcat --pid `pgrep fate`
 
 如果日志不全的话，参考[这个](https://github.com/hexstr/FGOAssetsModifyTool/issues/106#issuecomment-1664838421)
 
-新增：在Mod文件夹下创建文件`debug.log`和`error.log`，会保存模块产生的日志
+新增：在 Mod 文件夹下创建文件`debug.log`和`error.log`，会保存模块产生的日志
