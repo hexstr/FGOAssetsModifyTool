@@ -35,6 +35,7 @@
 - `战斗地点名称`汉化（例如`太阳王的居城`）
 - `物品名称`汉化（例如`圣晶石`）
 - `Event名称`汉化（例如`活动加成从者友情点获得量2倍`，我也不知道显示在哪里）
+- 剧情文本转发，可以配合一些翻译器达到机翻的效果，见https://www.bilibili.com/video/BV1fhqUYiEtc
 - 感谢[chaldea-data](https://github.com/chaldea-center/chaldea-data/tree/main/mappings)提供的文本翻译（非自愿）
 
 ## 其它文档
